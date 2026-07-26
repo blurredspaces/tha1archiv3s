@@ -159,26 +159,24 @@
   </a>
 </section>
 
-<!-- ============ FLOATING CONTENT (scrolls up over sticky hero video) ============ -->
-<div class="relative z-10 bg-[var(--bg)] shadow-[0_-30px_60px_-15px_rgba(0,0,0,.7)] overflow-hidden">
+<!-- ============ SELECTED WORK (floats over sticky video) ============ -->
+<section id="work" class="relative z-10 py-24 md:py-32">
+  <p class="font-mono text-[11px] tracked text-white/70 px-[30px] mb-12 md:mb-16">MUSEUM OF THE MOVING IMAGE — 2025</p>
 
-<!-- ============ SELECTED WORK (staggered collage) ============ -->
-<section id="work" class="relative py-20 md:py-28 overflow-hidden">
-  <div class="absolute inset-0">
-    <img src="assets/Photos/GFS_052825_164.jpeg" alt="" class="w-full h-full object-cover blur-md scale-110 opacity-60">
-    <div class="absolute inset-0 bg-black/55"></div>
-  </div>
-
-  <p class="relative font-mono text-[11px] tracked text-white/70 px-6 md:px-14 mb-10 md:mb-14">MUSEUM OF THE MOVING IMAGE — 2025</p>
-
-  <div class="relative grid md:grid-cols-2 gap-8 md:gap-14 px-6 md:px-14 max-w-5xl">
-    <a href="#" class="flat-tile aspect-[4/3] md:mt-16 shadow-[0_25px_50px_-12px_rgba(0,0,0,.65)]">
+  <div class="grid grid-cols-1 gap-12 md:gap-16 px-[30px]">
+    <a href="#" class="flat-tile aspect-[4/3] shadow-[0_25px_50px_-12px_rgba(0,0,0,.8)]">
+      <img src="assets/Photos/GFS_052825_164.jpeg" alt="Wabi-Sabi premiere at Museum of the Moving Image" class="absolute inset-0 w-full h-full object-cover">
+      <div class="flat-tile-caption">
+        <p class="font-mono text-[11px] tracked text-white">PREMIERE SCREENING</p>
+      </div>
+    </a>
+    <a href="#" class="flat-tile aspect-[4/3] shadow-[0_25px_50px_-12px_rgba(0,0,0,.8)]">
       <img src="assets/Photos/GFS_052825_171.jpeg" alt="Wabi-Sabi title card, Ghetto Film School screening" class="absolute inset-0 w-full h-full object-cover">
       <div class="flat-tile-caption">
         <p class="font-mono text-[11px] tracked text-white">WABI-SABI — GFS THESIS FILMS</p>
       </div>
     </a>
-    <a href="#" class="flat-tile aspect-[4/3] shadow-[0_25px_50px_-12px_rgba(0,0,0,.65)]">
+    <a href="#" class="flat-tile aspect-[4/3] shadow-[0_25px_50px_-12px_rgba(0,0,0,.8)]">
       <img src="assets/Photos/GFS_052825_216.jpeg" alt="Wabi-Sabi post-screening panel" class="absolute inset-0 w-full h-full object-cover">
       <div class="flat-tile-caption">
         <p class="font-mono text-[11px] tracked text-white">POST-SCREENING Q&amp;A</p>
@@ -186,6 +184,9 @@
     </a>
   </div>
 </section>
+
+<!-- ============ SOLID CONTENT (covers video from here down) ============ -->
+<div class="relative z-10 bg-[var(--bg)] shadow-[0_-30px_60px_-15px_rgba(0,0,0,.7)]">
 
 <!-- ============ FILMOGRAPHY LEDGER ============ -->
 <section id="films" class="px-6 md:px-14 py-24 md:py-32 bg-[var(--bg-elevated)] border-y border-[var(--line)]">
