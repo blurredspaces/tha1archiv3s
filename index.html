@@ -1,9 +1,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans:  ['Montserrat', 'sans-serif'],
+          serif: ['Montserrat', 'sans-serif'],
+          mono:  ['Montserrat', 'sans-serif'],
+        },
+      },
+    },
+  };
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,400;1,9..144,500&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,400;1,200;1,300&display=swap" rel="stylesheet">
 <title>tha1archiv3s — Director</title>
 
 <style>
@@ -24,12 +37,16 @@
   body{
     background:var(--bg);
     color:var(--text);
-    font-family:'Archivo',sans-serif;
+    font-family:'Montserrat',sans-serif;
+    font-weight:200;
     -webkit-font-smoothing:antialiased;
     overflow-x:hidden;
   }
-  .font-serif{ font-family:'Fraunces',serif; }
-  .font-mono{ font-family:'Space Mono',monospace; }
+  .font-serif{ font-family:'Montserrat',sans-serif; }
+  .font-mono{ font-family:'Montserrat',sans-serif; }
+  /* keep everything extra light (beats Tailwind's injected utilities) */
+  .font-black,.font-bold,.font-extrabold,.font-semibold,.font-medium{ font-weight:200 !important; }
+  h1,h2,h3,h4,strong,b{ font-weight:200; }
 
   ::selection{ background:var(--accent); color:#0b0a09; }
 
@@ -62,8 +79,8 @@
   a, button{ transition:color .3s cubic-bezier(.19,1,.22,1), opacity .3s cubic-bezier(.19,1,.22,1), transform .3s cubic-bezier(.19,1,.22,1), background-color .3s cubic-bezier(.19,1,.22,1), border-color .3s cubic-bezier(.19,1,.22,1); }
   a:focus-visible, button:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
 
-  .blurred-wordmark{
-    filter: blur(1.4px);
+  .hero-logo{
+    opacity:.68;
     user-select:none;
   }
 
@@ -100,11 +117,13 @@
   .icon-btn:active{ transform:translateY(0); }
 
   /* raw nav bar */
-  .raw-nav{
-    background:rgba(10,10,10,.96);
+  .raw-nav a{
+    color:#f5f5f5; font-weight:200;
+    text-shadow:0 1px 12px rgba(0,0,0,.75);
+    filter:blur(0);
+    transition:filter .35s cubic-bezier(.19,1,.22,1);
   }
-  .raw-nav a{ color:#f5f5f5; font-weight:700; }
-  .raw-nav a:hover{ opacity:.55; }
+  .raw-nav a:hover, .raw-nav a:focus-visible{ filter:blur(2.2px); }
 
   /* flat work grid */
   .flat-tile{ position:relative; overflow:hidden; display:block; }
@@ -125,11 +144,11 @@
 
 <!-- ============ NAV ============ -->
 <header class="fixed top-0 inset-x-0 z-50 flex justify-center pt-4 px-4">
-  <nav class="raw-nav inline-flex items-center gap-4 md:gap-6 px-4 py-1.5 text-[11px] md:text-xs uppercase">
-    <a href="#work">Work</a>
-    <a href="#films">Films</a>
-    <a href="#about">About</a>
-    <a href="#contact">Contact</a>
+  <nav class="raw-nav inline-flex items-center gap-4 md:gap-6 px-4 py-1.5 text-[11px] md:text-xs lowercase">
+    <a href="personal.html">personal</a>
+    <a href="commissioned.html">commissioned</a>
+    <a href="#about">info</a>
+    <a href="#contact">contact</a>
   </nav>
 </header>
 
@@ -148,41 +167,16 @@
   <div class="hidden md:block absolute left-4 top-0 bottom-0 w-1 sprocket-col opacity-60"></div>
   <div class="hidden md:block absolute right-4 top-0 bottom-0 w-1 sprocket-col opacity-60"></div>
 
-  <div class="relative h-full flex flex-col items-center pt-[57px] md:pt-[73px]">
-    <h1 class="blurred-wordmark reveal is-visible font-serif font-black lowercase leading-none text-[5.25vw] md:text-[5.5vw] text-white text-center">
-      tha1archiv3s
-    </h1>
-  </div>
+  <h1 class="reveal is-visible absolute inset-0 flex items-center justify-center px-6 md:px-12 py-20 md:py-24 pointer-events-none">
+    <span class="sr-only">tha1archiv3s</span>
+    <img src="assets/logo/ThaiArchives%20Logo%20white.png"
+         alt="tha1archiv3s"
+         class="hero-logo w-full h-full object-contain select-none">
+  </h1>
 
   <a href="#work" aria-label="Scroll to work" class="icon-btn absolute bottom-8 right-6 md:right-14 h-12 w-12 rounded-full flex items-center justify-center text-[var(--text)]">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1V15M8 15L1.5 8.5M8 15L14.5 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </a>
-</section>
-
-<!-- ============ SELECTED WORK (floats over sticky video) ============ -->
-<section id="work" class="relative z-10 py-24 md:py-32">
-  <p class="font-mono text-[11px] tracked text-white/70 px-[30px] mb-12 md:mb-16">MUSEUM OF THE MOVING IMAGE — 2025</p>
-
-  <div class="grid grid-cols-1 gap-12 md:gap-16 px-[30px]">
-    <a href="#" class="flat-tile aspect-[4/3] shadow-[0_25px_50px_-12px_rgba(0,0,0,.8)]">
-      <img src="assets/Photos/GFS_052825_164.jpeg" alt="Wabi-Sabi premiere at Museum of the Moving Image" class="absolute inset-0 w-full h-full object-cover">
-      <div class="flat-tile-caption">
-        <p class="font-mono text-[11px] tracked text-white">PREMIERE SCREENING</p>
-      </div>
-    </a>
-    <a href="#" class="flat-tile aspect-[4/3] shadow-[0_25px_50px_-12px_rgba(0,0,0,.8)]">
-      <img src="assets/Photos/GFS_052825_171.jpeg" alt="Wabi-Sabi title card, Ghetto Film School screening" class="absolute inset-0 w-full h-full object-cover">
-      <div class="flat-tile-caption">
-        <p class="font-mono text-[11px] tracked text-white">WABI-SABI — GFS THESIS FILMS</p>
-      </div>
-    </a>
-    <a href="#" class="flat-tile aspect-[4/3] shadow-[0_25px_50px_-12px_rgba(0,0,0,.8)]">
-      <img src="assets/Photos/GFS_052825_216.jpeg" alt="Wabi-Sabi post-screening panel" class="absolute inset-0 w-full h-full object-cover">
-      <div class="flat-tile-caption">
-        <p class="font-mono text-[11px] tracked text-white">POST-SCREENING Q&amp;A</p>
-      </div>
-    </a>
-  </div>
 </section>
 
 <!-- ============ SOLID CONTENT (covers video from here down) ============ -->
@@ -245,7 +239,7 @@
 <section id="about" class="relative z-10 px-6 md:px-14 py-24 md:py-32 backdrop-blur-2xl bg-black/55">
   <div class="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
     <div class="reveal relative aspect-[4/5]">
-      <img src="https://placehold.co/900x1125/1d1916/a89f8f?text=Portrait" alt="Director portrait" class="absolute inset-0 w-full h-full object-cover">
+      <img src="assets/Photos/Thailer%20Fox%20Featured%20Portrait.png" alt="Portrait of Thailer Fox" class="absolute inset-0 w-full h-full object-cover">
       <div class="absolute inset-0 border border-[var(--line-strong)]"></div>
     </div>
     <div class="reveal">
@@ -262,31 +256,36 @@
       </a>
     </div>
   </div>
+
+  <div class="reveal flex justify-center mt-20 md:mt-28">
+    <img src="assets/logo/ThaiArchives%20Logo%20white.png"
+         alt="tha1archiv3s"
+         class="w-[60vw] md:w-[26vw] max-w-[380px] h-auto opacity-60 select-none">
+  </div>
 </section>
 
 <!-- ============ SOLID CONTENT (covers video again) ============ -->
 <div class="relative z-10 bg-[var(--bg)]">
 
 <!-- ============ CONTACT / FOOTER ============ -->
-<footer id="contact" class="relative px-6 md:px-14 pt-24 md:pt-32 pb-10 bg-[var(--bg-elevated)] border-t border-[var(--line)] overflow-hidden">
-  <div class="vignette opacity-60"></div>
+<footer id="contact" class="relative px-6 md:px-14 pt-24 md:pt-32 pb-10 bg-white text-[#0a0a0a] overflow-hidden">
   <div class="relative reveal">
-    <p class="font-mono text-[11px] tracked text-[var(--accent-soft)] mb-6">CONTACT</p>
-    <a href="mailto:create@tha1archiv3s.com" class="font-serif tracked-tight text-[5vw] md:text-[2.5vw] leading-none block hover:text-[var(--accent-soft)] break-all md:break-normal">
+    <p class="font-mono text-[11px] tracked text-black/50 mb-6">CONTACT</p>
+    <a href="mailto:create@tha1archiv3s.com" class="font-serif tracked-tight text-[5vw] md:text-[2.5vw] leading-none block hover:opacity-55 break-all md:break-normal">
       create@tha1archiv3s.com
     </a>
 
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mt-16 md:mt-20 pt-10 border-t border-[var(--line)]">
-      <div class="flex flex-wrap gap-x-8 gap-y-3 font-mono text-[11px] tracked text-[var(--text-dim)]">
-        <a href="#" class="nav-link hover:text-[var(--text)]">INSTAGRAM</a>
-        <a href="#" class="nav-link hover:text-[var(--text)]">VIMEO</a>
-        <a href="#" class="nav-link hover:text-[var(--text)]">IMDB</a>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mt-16 md:mt-20 pt-10 border-t border-black/15">
+      <div class="flex flex-wrap gap-x-8 gap-y-3 font-mono text-[11px] tracked text-black/60">
+        <a href="#" class="hover:text-black">INSTAGRAM</a>
+        <a href="#" class="hover:text-black">VIMEO</a>
+        <a href="#" class="hover:text-black">IMDB</a>
       </div>
-      <p class="font-mono text-[11px] tracked text-[var(--text-faint)]">© 2026 tha1archiv3s — all rights reserved</p>
+      <p class="font-mono text-[11px] tracked text-black/40">© 2026 tha1archiv3s — all rights reserved</p>
     </div>
   </div>
 
-  <a href="#home" aria-label="Back to top" class="icon-btn fixed bottom-6 right-6 z-40 h-11 w-11 rounded-full flex items-center justify-center text-[var(--text)]">
+  <a href="#home" aria-label="Back to top" class="fixed bottom-6 right-6 z-40 h-11 w-11 rounded-full flex items-center justify-center border border-white/25 bg-black/60 backdrop-blur-sm text-white hover:bg-black/80">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 13V1M7 1L1.5 6.5M7 1L12.5 6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </a>
 </footer>
