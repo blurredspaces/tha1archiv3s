@@ -1,0 +1,295 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,400;1,9..144,500&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<title>tha1archiv3s — Director</title>
+
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --bg-elevated:#141414;
+    --bg-floating:#1c1c1c;
+    --text:#f5f5f5;
+    --text-dim:#a3a3a3;
+    --text-faint:#6b6b6b;
+    --accent:#ffffff;
+    --accent-soft:#d4d4d4;
+    --line:rgba(245,245,245,.12);
+    --line-strong:rgba(245,245,245,.22);
+  }
+
+  *{ scroll-behavior:smooth; }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Archivo',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  .font-serif{ font-family:'Fraunces',serif; }
+  .font-mono{ font-family:'Space Mono',monospace; }
+
+  ::selection{ background:var(--accent); color:#0b0a09; }
+
+  /* film grain overlay */
+  .grain{
+    position:fixed; inset:0; z-index:60; pointer-events:none;
+    opacity:.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* vignette */
+  .vignette{
+    position:absolute; inset:0;
+    background:radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(0,0,0,.65) 100%);
+  }
+
+  .tracked{ letter-spacing:.16em; }
+  .tracked-tight{ letter-spacing:-.03em; }
+
+  .nav-link{
+    position:relative; padding-bottom:2px;
+  }
+  .nav-link::after{
+    content:''; position:absolute; left:0; bottom:0; width:0; height:1px;
+    background:var(--accent); transition:width .35s cubic-bezier(.19,1,.22,1);
+  }
+  .nav-link:hover::after, .nav-link:focus-visible::after{ width:100%; }
+  .nav-link:focus-visible{ outline:none; }
+
+  a, button{ transition:color .3s cubic-bezier(.19,1,.22,1), opacity .3s cubic-bezier(.19,1,.22,1), transform .3s cubic-bezier(.19,1,.22,1), background-color .3s cubic-bezier(.19,1,.22,1), border-color .3s cubic-bezier(.19,1,.22,1); }
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  .blurred-wordmark{
+    filter: blur(2.5px);
+    user-select:none;
+  }
+
+  /* filmography rows */
+  .ledger-row{ position:relative; }
+  .ledger-row::before{
+    content:''; position:absolute; left:-1.25rem; top:0; bottom:0; width:2px;
+    background:var(--accent); transform:scaleY(0); transform-origin:top; transition:transform .4s cubic-bezier(.19,1,.22,1);
+  }
+  .ledger-row:hover::before{ transform:scaleY(1); }
+  .ledger-row:hover{ background:rgba(243,237,225,.03); }
+
+  /* reveal on scroll */
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .9s cubic-bezier(.19,1,.22,1), transform .9s cubic-bezier(.19,1,.22,1); }
+  .reveal.is-visible{ opacity:1; transform:translateY(0); }
+
+  .sprocket-col{
+    background-image: radial-gradient(circle, rgba(243,237,225,.14) 1.5px, transparent 1.6px);
+    background-size: 100% 34px;
+  }
+
+  .btn-primary{
+    background:var(--accent); color:#0a0a0a;
+  }
+  .btn-primary:hover{ background:var(--accent-soft); transform:translateY(-2px); }
+  .btn-primary:active{ transform:translateY(0); }
+
+  .icon-btn{
+    border:1px solid var(--line-strong);
+    background:rgba(20,20,20,.6);
+    backdrop-filter:blur(6px);
+  }
+  .icon-btn:hover{ border-color:var(--accent); background:rgba(245,245,245,.12); transform:translateY(-2px); }
+  .icon-btn:active{ transform:translateY(0); }
+
+  /* raw nav bar */
+  .raw-nav{
+    background:rgba(10,10,10,.96);
+  }
+  .raw-nav a{ color:#f5f5f5; font-weight:700; }
+  .raw-nav a:hover{ opacity:.55; }
+
+  /* flat work grid */
+  .flat-tile{ position:relative; overflow:hidden; display:block; }
+  .flat-tile img{ transition:transform .8s cubic-bezier(.19,1,.22,1); }
+  .flat-tile:hover img{ transform:scale(1.04); }
+  .flat-tile-caption{
+    position:absolute; left:0; right:0; bottom:0; padding:1.25rem;
+    background:linear-gradient(to top, rgba(0,0,0,.75), rgba(0,0,0,0));
+    opacity:0; transition:opacity .4s ease;
+  }
+  .flat-tile:hover .flat-tile-caption{ opacity:1; }
+
+  #mobileMenu{ transition:opacity .5s cubic-bezier(.19,1,.22,1), visibility .5s; }
+  #mobileMenu.hidden-menu{ opacity:0; visibility:hidden; pointer-events:none; }
+</style>
+
+<div class="grain"></div>
+
+<!-- ============ NAV ============ -->
+<header class="fixed top-0 inset-x-0 z-50 flex justify-center pt-4 px-4">
+  <nav class="raw-nav inline-flex items-center gap-4 md:gap-6 px-4 py-1.5 text-[11px] md:text-xs uppercase">
+    <a href="#work">Work</a>
+    <a href="#films">Films</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<!-- ============ HERO ============ -->
+<section id="home" class="sticky top-0 z-0 h-[100svh] w-full overflow-hidden">
+  <video
+    class="absolute inset-0 w-full h-full object-cover"
+    autoplay muted loop playsinline
+    poster="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'><rect width='1' height='1' fill='%230a0a0a'/></svg>">
+    <source src="assets/video/reel.mp4" type="video/mp4">
+  </video>
+
+  <div class="vignette"></div>
+
+  <!-- sprocket edges -->
+  <div class="hidden md:block absolute left-4 top-0 bottom-0 w-1 sprocket-col opacity-60"></div>
+  <div class="hidden md:block absolute right-4 top-0 bottom-0 w-1 sprocket-col opacity-60"></div>
+
+  <div class="relative h-full flex flex-col items-center pt-16 md:pt-20">
+    <h1 class="blurred-wordmark reveal is-visible font-serif font-black lowercase leading-none text-[5.25vw] md:text-[5.5vw] text-white text-center">
+      tha1archiv3s
+    </h1>
+  </div>
+
+  <a href="#work" aria-label="Scroll to work" class="icon-btn absolute bottom-8 right-6 md:right-14 h-12 w-12 rounded-full flex items-center justify-center text-[var(--text)]">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1V15M8 15L1.5 8.5M8 15L14.5 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+</section>
+
+<!-- ============ FLOATING CONTENT (scrolls up over sticky hero video) ============ -->
+<div class="relative z-10 bg-[var(--bg)] shadow-[0_-30px_60px_-15px_rgba(0,0,0,.7)] overflow-hidden">
+
+<!-- ============ SELECTED WORK (staggered collage) ============ -->
+<section id="work" class="relative py-20 md:py-28 overflow-hidden">
+  <div class="absolute inset-0">
+    <img src="assets/Photos/GFS_052825_164.jpeg" alt="" class="w-full h-full object-cover blur-md scale-110 opacity-60">
+    <div class="absolute inset-0 bg-black/55"></div>
+  </div>
+
+  <p class="relative font-mono text-[11px] tracked text-white/70 px-6 md:px-14 mb-10 md:mb-14">MUSEUM OF THE MOVING IMAGE — 2025</p>
+
+  <div class="relative grid md:grid-cols-2 gap-8 md:gap-14 px-6 md:px-14 max-w-5xl">
+    <a href="#" class="flat-tile aspect-[4/3] md:mt-16 shadow-[0_25px_50px_-12px_rgba(0,0,0,.65)]">
+      <img src="assets/Photos/GFS_052825_171.jpeg" alt="Wabi-Sabi title card, Ghetto Film School screening" class="absolute inset-0 w-full h-full object-cover">
+      <div class="flat-tile-caption">
+        <p class="font-mono text-[11px] tracked text-white">WABI-SABI — GFS THESIS FILMS</p>
+      </div>
+    </a>
+    <a href="#" class="flat-tile aspect-[4/3] shadow-[0_25px_50px_-12px_rgba(0,0,0,.65)]">
+      <img src="assets/Photos/GFS_052825_216.jpeg" alt="Wabi-Sabi post-screening panel" class="absolute inset-0 w-full h-full object-cover">
+      <div class="flat-tile-caption">
+        <p class="font-mono text-[11px] tracked text-white">POST-SCREENING Q&amp;A</p>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ============ FILMOGRAPHY LEDGER ============ -->
+<section id="films" class="px-6 md:px-14 py-24 md:py-32 bg-[var(--bg-elevated)] border-y border-[var(--line)]">
+  <div class="reveal mb-14 md:mb-16">
+    <p class="font-mono text-[11px] tracked text-[var(--accent-soft)] mb-4">FILMOGRAPHY</p>
+    <h2 class="font-serif tracked-tight text-4xl md:text-6xl">The Ledger</h2>
+  </div>
+
+  <div class="reveal font-mono text-[11px] tracked text-[var(--text-faint)] grid grid-cols-[auto_1fr_auto_auto] gap-4 md:gap-10 pb-4 border-b border-[var(--line)]">
+    <span>YR</span><span>TITLE</span><span class="hidden md:block">TYPE</span><span></span>
+  </div>
+
+  <div class="divide-y divide-[var(--line)]">
+    <div class="ledger-row grid grid-cols-[auto_1fr_auto_auto] gap-4 md:gap-10 items-center py-6 pl-2">
+      <span class="font-mono text-xs text-[var(--text-faint)]">25</span>
+      <span class="font-serif text-xl md:text-2xl tracked-tight">Somewhere in the Static</span>
+      <span class="hidden md:block font-mono text-[11px] tracked text-[var(--text-dim)]">SHORT FILM</span>
+      <a href="#" class="font-mono text-[11px] tracked text-[var(--text-dim)] hover:text-[var(--accent-soft)]">VIEW →</a>
+    </div>
+    <div class="ledger-row grid grid-cols-[auto_1fr_auto_auto] gap-4 md:gap-10 items-center py-6 pl-2">
+      <span class="font-mono text-xs text-[var(--text-faint)]">24</span>
+      <span class="font-serif text-xl md:text-2xl tracked-tight">Nightshade</span>
+      <span class="hidden md:block font-mono text-[11px] tracked text-[var(--text-dim)]">MUSIC VIDEO</span>
+      <a href="#" class="font-mono text-[11px] tracked text-[var(--text-dim)] hover:text-[var(--accent-soft)]">VIEW →</a>
+    </div>
+    <div class="ledger-row grid grid-cols-[auto_1fr_auto_auto] gap-4 md:gap-10 items-center py-6 pl-2">
+      <span class="font-mono text-xs text-[var(--text-faint)]">24</span>
+      <span class="font-serif text-xl md:text-2xl tracked-tight">The Long Exhale</span>
+      <span class="hidden md:block font-mono text-[11px] tracked text-[var(--text-dim)]">DOCUMENTARY</span>
+      <a href="#" class="font-mono text-[11px] tracked text-[var(--text-dim)] hover:text-[var(--accent-soft)]">VIEW →</a>
+    </div>
+    <div class="ledger-row grid grid-cols-[auto_1fr_auto_auto] gap-4 md:gap-10 items-center py-6 pl-2">
+      <span class="font-mono text-xs text-[var(--text-faint)]">23</span>
+      <span class="font-serif text-xl md:text-2xl tracked-tight">Afterglow</span>
+      <span class="hidden md:block font-mono text-[11px] tracked text-[var(--text-dim)]">COMMERCIAL</span>
+      <a href="#" class="font-mono text-[11px] tracked text-[var(--text-dim)] hover:text-[var(--accent-soft)]">VIEW →</a>
+    </div>
+    <div class="ledger-row grid grid-cols-[auto_1fr_auto_auto] gap-4 md:gap-10 items-center py-6 pl-2">
+      <span class="font-mono text-xs text-[var(--text-faint)]">23</span>
+      <span class="font-serif text-xl md:text-2xl tracked-tight">Paper Weather</span>
+      <span class="hidden md:block font-mono text-[11px] tracked text-[var(--text-dim)]">SHORT FILM</span>
+      <a href="#" class="font-mono text-[11px] tracked text-[var(--text-dim)] hover:text-[var(--accent-soft)]">VIEW →</a>
+    </div>
+    <div class="ledger-row grid grid-cols-[auto_1fr_auto_auto] gap-4 md:gap-10 items-center py-6 pl-2">
+      <span class="font-mono text-xs text-[var(--text-faint)]">22</span>
+      <span class="font-serif text-xl md:text-2xl tracked-tight">Low Tide</span>
+      <span class="hidden md:block font-mono text-[11px] tracked text-[var(--text-dim)]">MUSIC VIDEO</span>
+      <a href="#" class="font-mono text-[11px] tracked text-[var(--text-dim)] hover:text-[var(--accent-soft)]">VIEW →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about" class="px-6 md:px-14 py-24 md:py-32">
+  <div class="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+    <div class="reveal relative aspect-[4/5]">
+      <img src="https://placehold.co/900x1125/1d1916/a89f8f?text=Portrait" alt="Director portrait" class="absolute inset-0 w-full h-full object-cover">
+      <div class="absolute inset-0 border border-[var(--line-strong)]"></div>
+    </div>
+    <div class="reveal">
+      <p class="font-mono text-[11px] tracked text-[var(--accent-soft)] mb-4">ABOUT</p>
+      <h2 class="font-serif tracked-tight text-4xl md:text-5xl leading-[1.05] mb-7">Making films<br><span class="italic text-[var(--text-dim)]">worth keeping</span></h2>
+      <p class="text-[14px] md:text-[15px] leading-[1.8] text-[var(--text-dim)] mb-5">
+        A director working across narrative film, music video, and commercial work — drawn to quiet tension, texture, and stories that reward a second look.
+      </p>
+      <p class="text-[14px] md:text-[15px] leading-[1.8] text-[var(--text-dim)] mb-9">
+        tha1archiv3s is the growing record of that work: every reel, still, and cut kept in one place.
+      </p>
+      <a href="#contact" class="btn-primary inline-flex items-center gap-3 px-7 py-3.5 font-mono text-[11px] tracked rounded-full">
+        GET IN TOUCH
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT / FOOTER ============ -->
+<footer id="contact" class="relative px-6 md:px-14 pt-24 md:pt-32 pb-10 bg-[var(--bg-elevated)] border-t border-[var(--line)] overflow-hidden">
+  <div class="vignette opacity-60"></div>
+  <div class="relative reveal">
+    <p class="font-mono text-[11px] tracked text-[var(--accent-soft)] mb-6">CONTACT</p>
+    <a href="mailto:hello@tha1archiv3s.com" class="font-serif tracked-tight text-[10vw] md:text-[5vw] leading-none block hover:text-[var(--accent-soft)] break-all md:break-normal">
+      hello@tha1archiv3s.com
+    </a>
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mt-16 md:mt-20 pt-10 border-t border-[var(--line)]">
+      <div class="flex flex-wrap gap-x-8 gap-y-3 font-mono text-[11px] tracked text-[var(--text-dim)]">
+        <a href="#" class="nav-link hover:text-[var(--text)]">INSTAGRAM</a>
+        <a href="#" class="nav-link hover:text-[var(--text)]">VIMEO</a>
+        <a href="#" class="nav-link hover:text-[var(--text)]">IMDB</a>
+      </div>
+      <p class="font-mono text-[11px] tracked text-[var(--text-faint)]">© 2026 tha1archiv3s — all rights reserved</p>
+    </div>
+  </div>
+
+  <a href="#home" aria-label="Back to top" class="icon-btn fixed bottom-6 right-6 z-40 h-11 w-11 rounded-full flex items-center justify-center text-[var(--text)]">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 13V1M7 1L1.5 6.5M7 1L12.5 6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+</footer>
+
+</div><!-- /floating content -->
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
