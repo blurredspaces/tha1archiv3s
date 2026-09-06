@@ -22,29 +22,30 @@
 <style>
   :root{
     --bg:#0a0a0a;
-    --bg-elevated:#141414;
-    --bg-floating:#1c1c1c;
     --text:#f5f5f5;
-    --text-dim:#a3a3a3;
-    --text-faint:#6b6b6b;
     --accent:#ffffff;
-    --accent-soft:#d4d4d4;
-    --line:rgba(245,245,245,.12);
-    --line-strong:rgba(245,245,245,.22);
+    /* key cursor — horizontal, hotspot on the teeth at the leading edge */
+    --cursor-light:url('assets/cursor/cursor-key-light.png') 2 7, auto;
+    --cursor-dark:url('assets/cursor/cursor-key-dark.png') 2 7, auto;
   }
 
-  *{ scroll-behavior:smooth; }
+  /* the key replaces the pointer everywhere, incl. links (UA sets those to
+     pointer, so they need naming explicitly rather than inheriting) */
+  body,a,button,[role="button"],label,summary,input,textarea,select{
+    cursor:var(--cursor-light);
+  }
+
   body{
     background:var(--bg);
     color:var(--text);
     font-family:'Montserrat',sans-serif;
     font-weight:200;
     -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
+    /* the home page is the hero alone — nothing to scroll to */
+    overflow:hidden;
   }
   .font-serif{ font-family:'Montserrat',sans-serif; }
   .font-mono{ font-family:'Montserrat',sans-serif; }
-  /* keep everything extra light (beats Tailwind's injected utilities) */
   .font-black,.font-bold,.font-extrabold,.font-semibold,.font-medium{ font-weight:200 !important; }
   h1,h2,h3,h4,strong,b{ font-weight:200; }
 
@@ -57,64 +58,17 @@
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   }
 
-  /* vignette */
   .vignette{
     position:absolute; inset:0;
     background:radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(0,0,0,.65) 100%);
   }
 
   .tracked{ letter-spacing:.16em; }
-  .tracked-tight{ letter-spacing:-.03em; }
-
-  .nav-link{
-    position:relative; padding-bottom:2px;
-  }
-  .nav-link::after{
-    content:''; position:absolute; left:0; bottom:0; width:0; height:1px;
-    background:var(--accent); transition:width .35s cubic-bezier(.19,1,.22,1);
-  }
-  .nav-link:hover::after, .nav-link:focus-visible::after{ width:100%; }
-  .nav-link:focus-visible{ outline:none; }
-
-  a, button{ transition:color .3s cubic-bezier(.19,1,.22,1), opacity .3s cubic-bezier(.19,1,.22,1), transform .3s cubic-bezier(.19,1,.22,1), background-color .3s cubic-bezier(.19,1,.22,1), border-color .3s cubic-bezier(.19,1,.22,1); }
-  a:focus-visible, button:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
-
-  .hero-logo{
-    opacity:.68;
-    user-select:none;
-  }
-
-  /* filmography rows */
-  .ledger-row{ position:relative; }
-  .ledger-row::before{
-    content:''; position:absolute; left:-1.25rem; top:0; bottom:0; width:2px;
-    background:#0a0a0a; transform:scaleY(0); transform-origin:top; transition:transform .4s cubic-bezier(.19,1,.22,1);
-  }
-  .ledger-row:hover::before{ transform:scaleY(1); }
-  .ledger-row:hover{ background:rgba(10,10,10,.04); }
-
-  /* reveal on scroll */
-  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .9s cubic-bezier(.19,1,.22,1), transform .9s cubic-bezier(.19,1,.22,1); }
-  .reveal.is-visible{ opacity:1; transform:translateY(0); }
 
   .sprocket-col{
     background-image: radial-gradient(circle, rgba(243,237,225,.14) 1.5px, transparent 1.6px);
     background-size: 100% 34px;
   }
-
-  .btn-primary{
-    background:var(--accent); color:#0a0a0a;
-  }
-  .btn-primary:hover{ background:var(--accent-soft); transform:translateY(-2px); }
-  .btn-primary:active{ transform:translateY(0); }
-
-  .icon-btn{
-    border:1px solid var(--line-strong);
-    background:rgba(20,20,20,.6);
-    backdrop-filter:blur(6px);
-  }
-  .icon-btn:hover{ border-color:var(--accent); background:rgba(245,245,245,.12); transform:translateY(-2px); }
-  .icon-btn:active{ transform:translateY(0); }
 
   /* raw nav bar */
   .raw-nav a{
@@ -125,176 +79,204 @@
   }
   .raw-nav a:hover, .raw-nav a:focus-visible{ filter:blur(2.2px); }
 
-  /* flat work grid */
-  .flat-tile{ position:relative; overflow:hidden; display:block; }
-  .flat-tile img{ transition:transform .8s cubic-bezier(.19,1,.22,1); }
-  .flat-tile:hover img{ transform:scale(1.04); }
-  .flat-tile-caption{
-    position:absolute; left:0; right:0; bottom:0; padding:1.25rem;
-    background:linear-gradient(to top, rgba(0,0,0,.75), rgba(0,0,0,0));
-    opacity:0; transition:opacity .4s ease;
+  /* ── lock gate ─────────────────────────────────────────────
+     While locked the reel sits behind a heavy blur, the nav is
+     softened and inert, and the logo is held back. Clicking the
+     padlock adds .unlocked to <html> and everything resolves. The class
+     goes on <html> (not <body>) so a returning session can be restored
+     before first paint, without the gate flashing.  */
+  .gate-media{
+    filter:blur(20px);
+    /* overfill so the blur doesn't pull transparent edges inward */
+    transform:scale(1.12);
+    transition:filter 1.1s cubic-bezier(.19,1,.22,1),
+               transform 1.1s cubic-bezier(.19,1,.22,1);
   }
-  .flat-tile:hover .flat-tile-caption{ opacity:1; }
+  html.unlocked .gate-media{ filter:blur(0); transform:scale(1); }
 
-  #mobileMenu{ transition:opacity .5s cubic-bezier(.19,1,.22,1), visibility .5s; }
-  #mobileMenu.hidden-menu{ opacity:0; visibility:hidden; pointer-events:none; }
+  .site-nav{
+    filter:blur(5px);
+    opacity:.4;
+    pointer-events:none;
+    transition:filter .9s cubic-bezier(.19,1,.22,1), opacity .9s cubic-bezier(.19,1,.22,1);
+  }
+  html.unlocked .site-nav{ filter:blur(0); opacity:1; pointer-events:auto; }
+
+  .hero-logo-wrap{
+    opacity:0;
+    transition:opacity 1.3s cubic-bezier(.19,1,.22,1) .25s;
+  }
+  html.unlocked .hero-logo-wrap{ opacity:1; }
+  .hero-logo{ opacity:.68; user-select:none; }
+
+  #lockGate{
+    transition:opacity .9s cubic-bezier(.19,1,.22,1), visibility .9s;
+  }
+  html.unlocked #lockGate{ opacity:0; visibility:hidden; pointer-events:none; }
+
+  /* the padlock sits at 50% / 67.7% of the overlay art — the button is
+     placed over it rather than making the whole image clickable */
+  #unlockBtn{
+    position:absolute;
+    left:50%; top:67.7%;
+    transform:translate(-50%,-50%);
+    width:11%; min-width:52px;
+    aspect-ratio:97/147;
+    border:0; background:transparent;
+    border-radius:9999px;
+  }
+  #unlockBtn::after{
+    content:''; position:absolute; inset:-45%;
+    border-radius:9999px;
+    background:radial-gradient(circle, rgba(255,255,255,.20), rgba(255,255,255,0) 70%);
+    opacity:.35;
+    animation:breathe 3.2s ease-in-out infinite;
+    transition:opacity .4s ease;
+  }
+  #unlockBtn:hover::after, #unlockBtn:focus-visible::after{ opacity:1; animation:none; }
+  #unlockBtn:focus-visible{ outline:2px solid rgba(255,255,255,.8); outline-offset:6px; }
+
+  /* call to action, sitting just below the padlock (its base is at ~79%) */
+  .unlock-cta{
+    position:absolute;
+    left:50%; top:88%;
+    transform:translateX(-50%);
+    white-space:nowrap;
+    pointer-events:none;
+    font-size:11px;
+    letter-spacing:.22em;
+    color:rgba(255,255,255,.72);
+    text-shadow:0 1px 12px rgba(0,0,0,.85);
+  }
+  /* wording follows the input device, not the screen width, so a touch
+     laptop still reads "tap" */
+  .unlock-cta .on-touch{ display:none; }
+  @media (hover:none),(pointer:coarse){
+    .unlock-cta .on-pointer{ display:none; }
+    .unlock-cta .on-touch{ display:inline; }
+  }
+
+  /* restoring an already-unlocked session: settle instantly, no replay */
+  html.no-gate-anim .gate-media,
+  html.no-gate-anim .site-nav,
+  html.no-gate-anim .hero-logo-wrap,
+  html.no-gate-anim #lockGate{ transition:none !important; }
+  @keyframes breathe{
+    0%,100%{ opacity:.28; }
+    50%    { opacity:.6; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    #unlockBtn::after{ animation:none; opacity:.6; }
+    .gate-media,.site-nav,.hero-logo-wrap,#lockGate{ transition-duration:.01ms; }
+  }
 </style>
+
+<script>
+  /* restore an unlocked session before first paint so the gate never flashes */
+  try{
+    if(sessionStorage.getItem('tha1archiv3s:unlocked') === '1'){
+      document.documentElement.classList.add('unlocked','no-gate-anim');
+    }
+  }catch(e){/* private mode / storage blocked — just show the gate */}
+</script>
 
 <div class="grain"></div>
 
 <!-- ============ NAV ============ -->
-<header class="fixed top-0 inset-x-0 z-50 flex justify-center pt-4 px-4">
+<header class="site-nav fixed top-0 inset-x-0 z-50 flex justify-center pt-4 px-4">
   <nav class="raw-nav inline-flex items-center gap-4 md:gap-6 px-4 py-1.5 text-[11px] md:text-xs lowercase">
     <a href="personal.html">personal</a>
     <a href="commissioned.html">commissioned</a>
-    <a href="#about">info</a>
-    <a href="#contact">contact</a>
+    <a href="info.html">info</a>
+    <a href="contact.html">contact</a>
   </nav>
 </header>
 
-<!-- ============ HERO ============ -->
-<section id="home" class="sticky top-0 z-0 h-[100svh] w-full overflow-hidden">
-  <video
-    class="absolute inset-0 w-full h-full object-cover"
-    autoplay muted loop playsinline
-    poster="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'><rect width='1' height='1' fill='%230a0a0a'/></svg>">
-    <source src="assets/video/reel.mp4" type="video/mp4">
-  </video>
+<!-- ============ HERO (the whole home page) ============ -->
+<section id="home" class="relative h-[100svh] w-full overflow-hidden">
 
-  <div class="vignette"></div>
+  <div class="gate-media absolute inset-0">
+    <video id="heroReel"
+      class="absolute inset-0 w-full h-full object-cover"
+      autoplay muted playsinline preload="auto"
+      poster="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'><rect width='1' height='1' fill='%230a0a0a'/></svg>"></video>
+    <div class="vignette"></div>
+  </div>
+
+  <script>
+    /* Three montage cuts. Start on a random one so repeat visits differ,
+       then rotate through the rest — a visitor who stays sees all three
+       instead of the same loop. Only the current cut is fetched, so this
+       costs no more bandwidth than a single reel. */
+    (function(){
+      var reels = [
+        'assets/video/Main_Page_Montage_ver1.mp4',
+        'assets/video/Main_Page_Montage_ver2.mp4',
+        'assets/video/Main_Page_Montage_ver3.mp4'
+      ];
+      var v = document.getElementById('heroReel');
+      var i = Math.floor(Math.random() * reels.length);
+
+      function play(n){
+        v.src = reels[n];
+        var p = v.play();
+        // autoplay may be deferred until the tab is visible — not an error
+        if (p && p.catch) p.catch(function(){});
+      }
+      // no `loop` attribute: advance to the next cut instead of repeating
+      v.addEventListener('ended', function(){
+        i = (i + 1) % reels.length;
+        play(i);
+      });
+      play(i);
+    })();
+  </script>
 
   <!-- sprocket edges -->
   <div class="hidden md:block absolute left-4 top-0 bottom-0 w-1 sprocket-col opacity-60"></div>
   <div class="hidden md:block absolute right-4 top-0 bottom-0 w-1 sprocket-col opacity-60"></div>
 
-  <h1 class="reveal is-visible absolute inset-0 flex items-center justify-center px-6 md:px-12 py-20 md:py-24 pointer-events-none">
+  <!-- revealed once unlocked -->
+  <h1 class="hero-logo-wrap absolute inset-0 flex items-center justify-center px-6 md:px-12 py-20 md:py-24 pointer-events-none">
     <span class="sr-only">tha1archiv3s</span>
     <img src="assets/logo/ThaiArchives%20Logo%20white.png"
          alt="tha1archiv3s"
-         class="hero-logo w-full h-full object-contain select-none">
+         class="hero-logo w-full h-full object-contain">
   </h1>
-
-  <a href="#work" aria-label="Scroll to work" class="icon-btn absolute bottom-8 right-6 md:right-14 h-12 w-12 rounded-full flex items-center justify-center text-[var(--text)]">
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1V15M8 15L1.5 8.5M8 15L14.5 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  </a>
 </section>
 
-<!-- ============ SOLID CONTENT (covers video from here down) ============ -->
-<div class="relative z-10 bg-[var(--bg)] shadow-[0_-30px_60px_-15px_rgba(0,0,0,.7)]">
-
-<!-- ============ FILMOGRAPHY LEDGER ============ -->
-<section id="films" class="px-6 md:px-14 py-24 md:py-32 bg-white text-[#0a0a0a]">
-  <div class="reveal mb-14 md:mb-16">
-    <p class="font-mono text-[11px] tracked text-black/50 mb-4">FILMOGRAPHY</p>
-    <h2 class="font-serif tracked-tight text-4xl md:text-6xl">The Ledger</h2>
+<!-- ============ LOCK GATE ============ -->
+<div id="lockGate" class="fixed inset-0 z-[70] flex items-center justify-center px-6">
+  <div class="relative w-full max-w-[760px]">
+    <img src="assets/graphics/lock_overlay.png"
+         alt="what i see, what i feel, what we feel."
+         class="w-full h-auto select-none pointer-events-none">
+    <button id="unlockBtn" type="button" aria-label="Unlock the site"></button>
+    <p class="unlock-cta">
+      <span class="on-pointer">click to unlock</span>
+      <span class="on-touch">tap to unlock</span>
+    </p>
   </div>
-
-  <div class="reveal font-mono text-[11px] tracked text-black/40 grid grid-cols-[auto_1fr_auto_auto] gap-4 md:gap-10 pb-4 border-b border-black/15">
-    <span>YR</span><span>TITLE</span><span class="hidden md:block">TYPE</span><span></span>
-  </div>
-
-  <div class="divide-y divide-black/10">
-    <div class="ledger-row grid grid-cols-[auto_1fr_auto_auto] gap-4 md:gap-10 items-center py-6 pl-2">
-      <span class="font-mono text-xs text-black/40">25</span>
-      <span class="font-serif text-xl md:text-2xl tracked-tight">Somewhere in the Static</span>
-      <span class="hidden md:block font-mono text-[11px] tracked text-black/55">SHORT FILM</span>
-      <a href="#" class="font-mono text-[11px] tracked text-black/55 hover:text-black">VIEW →</a>
-    </div>
-    <div class="ledger-row grid grid-cols-[auto_1fr_auto_auto] gap-4 md:gap-10 items-center py-6 pl-2">
-      <span class="font-mono text-xs text-black/40">24</span>
-      <span class="font-serif text-xl md:text-2xl tracked-tight">Nightshade</span>
-      <span class="hidden md:block font-mono text-[11px] tracked text-black/55">MUSIC VIDEO</span>
-      <a href="#" class="font-mono text-[11px] tracked text-black/55 hover:text-black">VIEW →</a>
-    </div>
-    <div class="ledger-row grid grid-cols-[auto_1fr_auto_auto] gap-4 md:gap-10 items-center py-6 pl-2">
-      <span class="font-mono text-xs text-black/40">24</span>
-      <span class="font-serif text-xl md:text-2xl tracked-tight">The Long Exhale</span>
-      <span class="hidden md:block font-mono text-[11px] tracked text-black/55">DOCUMENTARY</span>
-      <a href="#" class="font-mono text-[11px] tracked text-black/55 hover:text-black">VIEW →</a>
-    </div>
-    <div class="ledger-row grid grid-cols-[auto_1fr_auto_auto] gap-4 md:gap-10 items-center py-6 pl-2">
-      <span class="font-mono text-xs text-black/40">23</span>
-      <span class="font-serif text-xl md:text-2xl tracked-tight">Afterglow</span>
-      <span class="hidden md:block font-mono text-[11px] tracked text-black/55">COMMERCIAL</span>
-      <a href="#" class="font-mono text-[11px] tracked text-black/55 hover:text-black">VIEW →</a>
-    </div>
-    <div class="ledger-row grid grid-cols-[auto_1fr_auto_auto] gap-4 md:gap-10 items-center py-6 pl-2">
-      <span class="font-mono text-xs text-black/40">23</span>
-      <span class="font-serif text-xl md:text-2xl tracked-tight">Paper Weather</span>
-      <span class="hidden md:block font-mono text-[11px] tracked text-black/55">SHORT FILM</span>
-      <a href="#" class="font-mono text-[11px] tracked text-black/55 hover:text-black">VIEW →</a>
-    </div>
-    <div class="ledger-row grid grid-cols-[auto_1fr_auto_auto] gap-4 md:gap-10 items-center py-6 pl-2">
-      <span class="font-mono text-xs text-black/40">22</span>
-      <span class="font-serif text-xl md:text-2xl tracked-tight">Low Tide</span>
-      <span class="hidden md:block font-mono text-[11px] tracked text-black/55">MUSIC VIDEO</span>
-      <a href="#" class="font-mono text-[11px] tracked text-black/55 hover:text-black">VIEW →</a>
-    </div>
-  </div>
-</section>
-
-</div><!-- /solid content -->
-
-<!-- ============ ABOUT (blurred video shows through) ============ -->
-<section id="about" class="relative z-10 px-6 md:px-14 py-24 md:py-32 backdrop-blur-2xl bg-black/55">
-  <div class="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-    <div class="reveal relative aspect-[4/5]">
-      <img src="assets/Photos/Thailer%20Fox%20Featured%20Portrait.png" alt="Portrait of Thailer Fox" class="absolute inset-0 w-full h-full object-cover">
-      <div class="absolute inset-0 border border-[var(--line-strong)]"></div>
-    </div>
-    <div class="reveal">
-      <p class="font-mono text-[11px] tracked text-[var(--accent-soft)] mb-4">ABOUT</p>
-      <h2 class="font-serif tracked-tight text-4xl md:text-5xl leading-[1.05] mb-7 lowercase">thailer fox</h2>
-      <p class="text-[14px] md:text-[15px] leading-[1.8] text-[var(--text-dim)] mb-5">
-        A director working across narrative film, music video, and commercial work — drawn to quiet tension, texture, and stories that reward a second look.
-      </p>
-      <p class="text-[14px] md:text-[15px] leading-[1.8] text-[var(--text-dim)] mb-9">
-        tha1archiv3s is the growing record of that work: every reel, still, and cut kept in one place.
-      </p>
-      <a href="#contact" class="btn-primary inline-flex items-center gap-3 px-7 py-3.5 font-mono text-[11px] tracked">
-        GET IN TOUCH
-      </a>
-    </div>
-  </div>
-
-  <div class="reveal flex justify-center mt-20 md:mt-28">
-    <img src="assets/logo/ThaiArchives%20Logo%20white.png"
-         alt="tha1archiv3s"
-         class="w-[60vw] md:w-[26vw] max-w-[380px] h-auto opacity-60 select-none">
-  </div>
-</section>
-
-<!-- ============ SOLID CONTENT (covers video again) ============ -->
-<div class="relative z-10 bg-[var(--bg)]">
-
-<!-- ============ CONTACT / FOOTER ============ -->
-<footer id="contact" class="relative px-6 md:px-14 pt-24 md:pt-32 pb-10 bg-white text-[#0a0a0a] overflow-hidden">
-  <div class="relative reveal">
-    <p class="font-mono text-[11px] tracked text-black/50 mb-6">CONTACT</p>
-    <a href="mailto:create@tha1archiv3s.com" class="font-serif tracked-tight text-[5vw] md:text-[2.5vw] leading-none block hover:opacity-55 break-all md:break-normal">
-      create@tha1archiv3s.com
-    </a>
-
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mt-16 md:mt-20 pt-10 border-t border-black/15">
-      <div class="flex flex-wrap gap-x-8 gap-y-3 font-mono text-[11px] tracked text-black/60">
-        <a href="#" class="hover:text-black">INSTAGRAM</a>
-        <a href="#" class="hover:text-black">VIMEO</a>
-        <a href="#" class="hover:text-black">IMDB</a>
-      </div>
-      <p class="font-mono text-[11px] tracked text-black/40">© 2026 tha1archiv3s — all rights reserved</p>
-    </div>
-  </div>
-
-  <a href="#home" aria-label="Back to top" class="fixed bottom-6 right-6 z-40 h-11 w-11 rounded-full flex items-center justify-center border border-white/25 bg-black/60 backdrop-blur-sm text-white hover:bg-black/80">
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 13V1M7 1L1.5 6.5M7 1L12.5 6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  </a>
-</footer>
-
-</div><!-- /floating content -->
+</div>
 
 <script>
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
-  }, { threshold: 0.15 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  (function(){
+    var KEY  = 'tha1archiv3s:unlocked';
+    var root = document.documentElement;
+    var btn  = document.getElementById('unlockBtn');
+
+    if (root.classList.contains('unlocked')) {
+      // restored from an earlier unlock in this session
+      btn.setAttribute('tabindex', '-1');
+      requestAnimationFrame(function(){ root.classList.remove('no-gate-anim'); });
+    }
+
+    btn.addEventListener('click', function(){
+      root.classList.add('unlocked');
+      // sessionStorage: stays open for this tab, re-locks in a fresh one
+      try{ sessionStorage.setItem(KEY, '1'); }catch(e){}
+      // once open, the gate is no longer focusable
+      btn.setAttribute('tabindex', '-1');
+    });
+  })();
 </script>
