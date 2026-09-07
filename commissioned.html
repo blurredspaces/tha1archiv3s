@@ -84,6 +84,17 @@
     transition:filter .35s cubic-bezier(.19,1,.22,1);
   }
   .raw-nav a:hover, .raw-nav a:focus-visible{ filter:blur(2.2px); }
+
+  /* video grid tiles */
+  .flat-tile{ position:relative; overflow:hidden; display:block; }
+  .flat-tile img{ transition:transform .8s cubic-bezier(.19,1,.22,1); }
+  /* hovering anywhere in the link — thumbnail or credit — scales the still */
+  a:hover .flat-tile img{ transform:scale(1.04); }
+
+  /* reveal on scroll (paired with the observer at the end of the page —
+     without it these tiles would stay at opacity 0) */
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .9s cubic-bezier(.19,1,.22,1), transform .9s cubic-bezier(.19,1,.22,1); }
+  .reveal.is-visible{ opacity:1; transform:translateY(0); }
 </style>
 
 <div class="grain"></div>
@@ -104,9 +115,82 @@
   <h1 class="font-serif font-black lowercase tracked-tight text-[12vw] md:text-[6vw] leading-none">commissioned</h1>
 </section>
 
-<!-- ============ EMPTY STATE ============ -->
-<section class="flex-1 px-[30px] pb-24 md:pb-32">
-  <p class="font-mono text-[11px] tracked text-[var(--text-faint)]">SELECTED COMMISSIONED WORKS — COMING SOON</p>
+<!-- ============ VIDEO GRID ============ -->
+<section id="work" class="flex-1 px-6 md:px-14 pb-24 md:pb-32">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-[28px] gap-y-12 lg:gap-y-[52px]">
+    <a href="#" class="reveal block">
+      <div class="flat-tile aspect-video bg-[var(--bg-elevated)]">
+        <img src="https://placehold.co/800x450/141414/4a4a4a?text=01"
+             alt="Thumbnail placeholder 01"
+             class="absolute inset-0 w-full h-full object-cover">
+      </div>
+      <div class="mt-4 text-center text-[13px] md:text-[14px] leading-[1.65] text-white/85">
+        <p>director of photography</p>
+        <p><em>ring a bell</em> (2026)</p>
+        <p>directed by emma hagert</p>
+      </div>
+    </a>
+    <a href="#" class="reveal block">
+      <div class="flat-tile aspect-video bg-[var(--bg-elevated)]">
+        <img src="https://placehold.co/800x450/141414/4a4a4a?text=02"
+             alt="Thumbnail placeholder 02"
+             class="absolute inset-0 w-full h-full object-cover">
+      </div>
+      <div class="mt-4 text-center text-[13px] md:text-[14px] leading-[1.65] text-white/85">
+        <p>director of photography</p>
+        <p><em>ring a bell</em> (2026)</p>
+        <p>directed by emma hagert</p>
+      </div>
+    </a>
+    <a href="#" class="reveal block">
+      <div class="flat-tile aspect-video bg-[var(--bg-elevated)]">
+        <img src="https://placehold.co/800x450/141414/4a4a4a?text=03"
+             alt="Thumbnail placeholder 03"
+             class="absolute inset-0 w-full h-full object-cover">
+      </div>
+      <div class="mt-4 text-center text-[13px] md:text-[14px] leading-[1.65] text-white/85">
+        <p>director of photography</p>
+        <p><em>ring a bell</em> (2026)</p>
+        <p>directed by emma hagert</p>
+      </div>
+    </a>
+    <a href="#" class="reveal block">
+      <div class="flat-tile aspect-video bg-[var(--bg-elevated)]">
+        <img src="https://placehold.co/800x450/141414/4a4a4a?text=04"
+             alt="Thumbnail placeholder 04"
+             class="absolute inset-0 w-full h-full object-cover">
+      </div>
+      <div class="mt-4 text-center text-[13px] md:text-[14px] leading-[1.65] text-white/85">
+        <p>director of photography</p>
+        <p><em>ring a bell</em> (2026)</p>
+        <p>directed by emma hagert</p>
+      </div>
+    </a>
+    <a href="#" class="reveal block">
+      <div class="flat-tile aspect-video bg-[var(--bg-elevated)]">
+        <img src="https://placehold.co/800x450/141414/4a4a4a?text=05"
+             alt="Thumbnail placeholder 05"
+             class="absolute inset-0 w-full h-full object-cover">
+      </div>
+      <div class="mt-4 text-center text-[13px] md:text-[14px] leading-[1.65] text-white/85">
+        <p>director of photography</p>
+        <p><em>ring a bell</em> (2026)</p>
+        <p>directed by emma hagert</p>
+      </div>
+    </a>
+    <a href="#" class="reveal block">
+      <div class="flat-tile aspect-video bg-[var(--bg-elevated)]">
+        <img src="https://placehold.co/800x450/141414/4a4a4a?text=06"
+             alt="Thumbnail placeholder 06"
+             class="absolute inset-0 w-full h-full object-cover">
+      </div>
+      <div class="mt-4 text-center text-[13px] md:text-[14px] leading-[1.65] text-white/85">
+        <p>director of photography</p>
+        <p><em>ring a bell</em> (2026)</p>
+        <p>directed by emma hagert</p>
+      </div>
+    </a>
+  </div>
 </section>
 
 <!-- ============ CONTACT / FOOTER ============ -->
@@ -127,3 +211,10 @@
     </div>
   </div>
 </footer>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
