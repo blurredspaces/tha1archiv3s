@@ -71,6 +71,13 @@
   }
 
   .tracked{ letter-spacing:.16em; }
+
+  /* the instagram mark stands in for the word, so it matches the row it
+     sits in: same muted white, same lift on hover, and sized to the
+     text's cap height rather than its line box */
+  .ig-link{ display:inline-flex; align-items:center; opacity:.6; }
+  .ig-link img{ width:15px; height:15px; display:block; }
+  .ig-link:hover, .ig-link:focus-visible{ opacity:1; }
   .tracked-tight{ letter-spacing:-.03em; }
 
   a, button{ transition:color .3s cubic-bezier(.19,1,.22,1), opacity .3s cubic-bezier(.19,1,.22,1); }
@@ -116,7 +123,10 @@
     <div class="mt-16 md:mt-20 pt-10 border-t border-white/15
                 flex flex-col md:flex-row md:items-center justify-between gap-6">
       <div class="flex flex-wrap gap-x-8 gap-y-3 font-mono text-[11px] tracked text-white/60">
-        <a href="https://www.instagram.com/tha1archiv3s/" target="_blank" rel="noopener noreferrer" class="hover:text-white">INSTAGRAM</a>
+        <a href="https://www.instagram.com/tha1archiv3s/" target="_blank" rel="noopener noreferrer"
+           aria-label="Instagram" class="ig-link">
+          <img src="assets/graphics/instagram.png" alt="Instagram" width="96" height="96">
+        </a>
         <a href="https://www.imdb.com/name/nm14852404/" target="_blank" rel="noopener noreferrer" class="hover:text-white">IMDB</a>
         <a href="https://www.linkedin.com/in/thailer-fox-145892276/" target="_blank" rel="noopener noreferrer" class="hover:text-white">LINKEDIN</a>
       </div>
