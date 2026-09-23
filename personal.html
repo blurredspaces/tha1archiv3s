@@ -30,7 +30,9 @@
     --line:rgba(245,245,245,.12);
     /* key cursor — horizontal, hotspot on the teeth at the leading edge */
     --cursor-light:url('assets/cursor/cursor-key-light.png') 2 7, auto;
+    --cursor-light-lg:url('assets/cursor/cursor-key-light-lg.png') 3 9, pointer;
     --cursor-dark:url('assets/cursor/cursor-key-dark.png') 2 7, auto;
+    --cursor-dark-lg:url('assets/cursor/cursor-key-dark-lg.png') 3 9, pointer;
   }
 
   /* the key replaces the pointer everywhere, incl. links (UA sets those to
@@ -38,9 +40,22 @@
   body,a,button,[role="button"],label,summary,input,textarea,select{
     cursor:var(--cursor-light);
   }
+  /* anything actually clickable gets the same key one size up — the swap is
+     instant by nature (CSS cannot tween a cursor image), so the two files are
+     the same silhouette scaled, and it reads as the key stepping forward
+     rather than as a different cursor */
+  a,button,[role="button"],label,summary{
+    /* !important because Tailwind's preflight injects button{cursor:pointer}
+       after this stylesheet at equal specificity, which otherwise wins and
+       drops the key on every button */
+    cursor:var(--cursor-light-lg) !important;
+  }
   /* white sections flip to the black key so it stays visible */
   .on-white,.on-white a,.on-white button,.on-white input,.on-white textarea{
     cursor:var(--cursor-dark);
+  }
+  .on-white a,.on-white button,.on-white [role="button"],.on-white label,.on-white summary{
+    cursor:var(--cursor-dark-lg) !important;
   }
 
   *{ scroll-behavior:smooth; }
@@ -124,9 +139,16 @@
     padding:1.5rem;
     background:rgba(6,6,6,.92);
     backdrop-filter:blur(14px);
-    transition:opacity .4s cubic-bezier(.19,1,.22,1), visibility .4s;
+    transition:opacity .4s cubic-bezier(.19,1,.22,1), visibility 0s;
   }
-  #player.is-closed{ opacity:0; visibility:hidden; pointer-events:none; }
+  /* visibility flips the instant the dialog opens, so it can take focus
+     straight away, and is held back until the fade finishes on close.
+     Transitioning it over .4s instead leaves it computed as hidden on the
+     opening frame, and focus() on something invisible silently does nothing. */
+  #player.is-closed{
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .4s cubic-bezier(.19,1,.22,1), visibility 0s .4s;
+  }
 
   #playerInner{
     width:100%; max-width:1100px;
@@ -153,8 +175,22 @@
 
   #playerTitle em{ font-style:italic; }
 
+  /* Popup credit. The grid keeps its three short lines; the full credit —
+     roles, authorship, format, festivals — lives here, where there is room
+     for it and the reader has already committed to the film. */
+  #playerTitle .pt-title{ font-size:15px; color:rgba(245,245,245,.95); }
+  #playerTitle .pt-role{ margin-top:.5rem; color:rgba(245,245,245,.74); }
+  #playerTitle .pt-dir { color:rgba(245,245,245,.74); }
+  #playerTitle .pt-meta{
+    margin-top:.85rem;
+    font-size:11px; letter-spacing:.16em;
+    color:rgba(245,245,245,.42);
+  }
+  #playerTitle .pt-meta + .pt-meta{ margin-top:.2rem; }
+  @media (min-width:768px){ #playerTitle .pt-title{ font-size:17px; } }
+
   @media (prefers-reduced-motion: reduce){
-    #player, #playerInner{ transition-duration:.01ms; }
+    #player, #playerInner{ transition-duration:.01ms; transition-delay:0s; }
   }
 </style>
 
@@ -195,6 +231,13 @@
         <p><em>wabi sabi</em> (2025)</p>
         <p>directed by cierra collier</p>
       </div>
+      <div class="yt-credit" hidden>
+        <p class="pt-title"><em>wabi sabi</em> (2025)</p>
+        <p class="pt-role">writer | director of photography</p>
+        <p class="pt-dir">directed by cierra collier</p>
+        <p class="pt-meta">shot on arri alexa mini</p>
+        <p class="pt-meta">screened at museum of moving image</p>
+      </div>
     </div>
     <div class="reveal block">
       <div class="flat-tile aspect-video bg-[var(--bg-elevated)] yt-embed" data-yt="GUN30ixL-E8">
@@ -213,6 +256,11 @@
       <div class="mt-4 text-center text-[13px] md:text-[14px] leading-[1.65] text-white/85">
         <p><em>the last time</em></p>
         <p>director</p>
+      </div>
+      <div class="yt-credit" hidden>
+        <p class="pt-title"><em>the last time</em> (2026)</p>
+        <p class="pt-role">writer | director | director of photography | editor</p>
+        <p class="pt-meta">shot on sony fx6</p>
       </div>
     </div>
     <div class="reveal block">
@@ -233,6 +281,11 @@
         <p><em>the seasons pass, this shall too</em></p>
         <p>director</p>
       </div>
+      <div class="yt-credit" hidden>
+        <p class="pt-title"><em>the seasons pass, this shall too</em> (2026)</p>
+        <p class="pt-role">director | director of photography | editor</p>
+        <p class="pt-meta">shot on bolex h16 reflex</p>
+      </div>
     </div>
     <div class="reveal block">
       <div class="flat-tile aspect-video bg-[var(--bg-elevated)] yt-embed" data-yt="d4VH9Bx6dxI">
@@ -251,6 +304,11 @@
       <div class="mt-4 text-center text-[13px] md:text-[14px] leading-[1.65] text-white/85">
         <p><em>saudade</em></p>
         <p>director</p>
+      </div>
+      <div class="yt-credit" hidden>
+        <p class="pt-title"><em>saudade</em> (2025)</p>
+        <p class="pt-role">writer | director | director of photography | editor</p>
+        <p class="pt-meta">shot on blackmagic cinema camera 6k</p>
       </div>
     </div>
     <div class="reveal block">
@@ -271,6 +329,12 @@
         <p><em>an unmarked six</em></p>
         <p>director</p>
       </div>
+      <div class="yt-credit" hidden>
+        <p class="pt-title"><em>an unmarked six</em> (2025)</p>
+        <p class="pt-role">director | director of photography | editor</p>
+        <p class="pt-dir">written by lulu dakinah</p>
+        <p class="pt-meta">shot on bolex h16 reflex</p>
+      </div>
     </div>
     <div class="reveal block">
       <div class="flat-tile aspect-video bg-[var(--bg-elevated)] yt-embed" data-yt="uoagtaG13zA">
@@ -289,6 +353,11 @@
       <div class="mt-4 text-center text-[13px] md:text-[14px] leading-[1.65] text-white/85">
         <p><em>the beauty of connection</em></p>
         <p>director</p>
+      </div>
+      <div class="yt-credit" hidden>
+        <p class="pt-title"><em>the beauty of connection</em> (2025)</p>
+        <p class="pt-role">director | director of photography | editor</p>
+        <p class="pt-meta">shot on bolex h16 reflex</p>
       </div>
     </div>
     <div class="reveal block">
@@ -309,6 +378,12 @@
         <p>director of photography/editor</p>
         <p><em>ode to</em></p>
         <p>directed by lulu dakinah</p>
+      </div>
+      <div class="yt-credit" hidden>
+        <p class="pt-title"><em>ode to</em> (2025)</p>
+        <p class="pt-role">director of photography | editor</p>
+        <p class="pt-dir">written &amp; directed by lulu dakinah</p>
+        <p class="pt-meta">shot on blackmagic cinema camera 6k</p>
       </div>
     </div>
   </div>
@@ -374,7 +449,10 @@
       caption.innerHTML = credit;
       modal.classList.remove('is-closed');
       document.body.style.overflow = 'hidden';   // don't scroll the grid behind
-      closeBtn.focus();
+      // the dialog is still visibility:hidden on this tick, and you cannot
+      // focus what is not visible — wait a frame or focus silently fails and
+      // leaves the keyboard behind the backdrop
+      requestAnimationFrame(function(){ closeBtn.focus(); });
     }
 
     function close(){
@@ -388,7 +466,9 @@
     document.querySelectorAll('.yt-embed').forEach(function(box){
       var btn = box.querySelector('.yt-play');
       if (!btn) return;
-      var creditEl = box.parentElement.querySelector('.mt-4');
+      // the popup credit if the film has one, otherwise the grid's short form
+      var creditEl = box.parentElement.querySelector('.yt-credit') ||
+                     box.parentElement.querySelector('.mt-4');
       var credit   = creditEl ? creditEl.innerHTML : '';
       btn.addEventListener('click', function(e){
         // keep the opening click from carrying on to the backdrop, which

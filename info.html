@@ -32,12 +32,23 @@
     --line-strong:rgba(245,245,245,.22);
     /* key cursor — horizontal, hotspot on the teeth at the leading edge */
     --cursor-light:url('assets/cursor/cursor-key-light.png') 2 7, auto;
+    --cursor-light-lg:url('assets/cursor/cursor-key-light-lg.png') 3 9, pointer;
   }
 
   /* the key replaces the pointer everywhere, incl. links (UA sets those to
      pointer, so they need naming explicitly rather than inheriting) */
   body,a,button,[role="button"],label,summary,input,textarea,select{
     cursor:var(--cursor-light);
+  }
+  /* anything actually clickable gets the same key one size up — the swap is
+     instant by nature (CSS cannot tween a cursor image), so the two files are
+     the same silhouette scaled, and it reads as the key stepping forward
+     rather than as a different cursor */
+  a,button,[role="button"],label,summary{
+    /* !important because Tailwind's preflight injects button{cursor:pointer}
+       after this stylesheet at equal specificity, which otherwise wins and
+       drops the key on every button */
+    cursor:var(--cursor-light-lg) !important;
   }
 
   *{ scroll-behavior:smooth; }
@@ -99,7 +110,7 @@
 <!-- ============ ABOUT ============ -->
 <section id="about" class="px-6 md:px-14 pt-36 md:pt-44 pb-24 md:pb-32">
   <div class="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-    <div class="reveal relative aspect-[4/5]">
+    <div class="reveal relative aspect-[4/5] w-[60%] mx-auto">
       <img src="assets/Photos/Thailer%20Fox%20Featured%20Portrait.png" alt="Portrait of Thailer Fox" class="absolute inset-0 w-full h-full object-cover">
       <div class="absolute inset-0 border border-[var(--line-strong)]"></div>
     </div>
@@ -109,7 +120,7 @@
         <span class="sr-only">Thailer Fox</span>
         <img src="assets/graphics/thailer_fox_name.png"
              alt="Thailer Fox"
-             class="w-[93.6%] max-w-[408px] h-auto select-none">
+             class="w-full max-w-[510px] h-auto select-none">
       </h1>
       <p class="text-[14px] md:text-[15px] leading-[1.8] text-[var(--text-dim)] mb-12">
         writer, director, cinematographer, and editor

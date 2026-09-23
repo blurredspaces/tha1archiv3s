@@ -30,7 +30,9 @@
     --line:rgba(245,245,245,.12);
     /* key cursor — horizontal, hotspot on the teeth at the leading edge */
     --cursor-light:url('assets/cursor/cursor-key-light.png') 2 7, auto;
+    --cursor-light-lg:url('assets/cursor/cursor-key-light-lg.png') 3 9, pointer;
     --cursor-dark:url('assets/cursor/cursor-key-dark.png') 2 7, auto;
+    --cursor-dark-lg:url('assets/cursor/cursor-key-dark-lg.png') 3 9, pointer;
   }
 
   /* the key replaces the pointer everywhere, incl. links (UA sets those to
@@ -38,9 +40,22 @@
   body,a,button,[role="button"],label,summary,input,textarea,select{
     cursor:var(--cursor-light);
   }
+  /* anything actually clickable gets the same key one size up — the swap is
+     instant by nature (CSS cannot tween a cursor image), so the two files are
+     the same silhouette scaled, and it reads as the key stepping forward
+     rather than as a different cursor */
+  a,button,[role="button"],label,summary{
+    /* !important because Tailwind's preflight injects button{cursor:pointer}
+       after this stylesheet at equal specificity, which otherwise wins and
+       drops the key on every button */
+    cursor:var(--cursor-light-lg) !important;
+  }
   /* white sections flip to the black key so it stays visible */
   .on-white,.on-white a,.on-white button,.on-white input,.on-white textarea{
     cursor:var(--cursor-dark);
+  }
+  .on-white a,.on-white button,.on-white [role="button"],.on-white label,.on-white summary{
+    cursor:var(--cursor-dark-lg) !important;
   }
 
   *{ scroll-behavior:smooth; }
@@ -88,8 +103,69 @@
   /* video grid tiles */
   .flat-tile{ position:relative; overflow:hidden; display:block; }
   .flat-tile img{ transition:transform .8s cubic-bezier(.19,1,.22,1); }
-  /* hovering anywhere in the link — thumbnail or credit — scales the still */
-  a:hover .flat-tile img{ transform:scale(1.04); }
+  /* hovering anywhere in the tile — thumbnail or credit — scales the still */
+  .tile-link:hover .flat-tile img, .tile-link:focus-visible .flat-tile img{ transform:scale(1.04); }
+  .tile-link{ display:block; width:100%; text-align:inherit; background:none; border:0; padding:0; }
+
+  /* ── still viewer ──────────────────────────────────────────
+     Same lightbox as the personal page. These films have no public
+     link to play, so the still takes the player's place and the full
+     credit sits underneath it. */
+  #viewer{
+    position:fixed; inset:0; z-index:80;
+    display:flex; align-items:center; justify-content:center;
+    padding:1.5rem;
+    background:rgba(6,6,6,.92);
+    backdrop-filter:blur(14px);
+    transition:opacity .4s cubic-bezier(.19,1,.22,1), visibility 0s;
+  }
+  /* visibility flips the instant the dialog opens, so it can take focus
+     straight away, and is held back until the fade finishes on close.
+     Transitioning it over .4s instead leaves it computed as hidden on the
+     opening frame, and focus() on something invisible silently does nothing. */
+  #viewer.is-closed{
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .4s cubic-bezier(.19,1,.22,1), visibility 0s .4s;
+  }
+
+  #viewerInner{
+    width:100%; max-width:1100px;
+    transform:scale(1);
+    transition:transform .45s cubic-bezier(.19,1,.22,1);
+  }
+  #viewer.is-closed #viewerInner{ transform:scale(.97); }
+
+  #viewerFrame{ position:relative; }
+  #viewerFrame img{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+
+  #viewerClose{
+    position:absolute; top:1.25rem; right:1.25rem;
+    height:44px; width:44px;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid rgba(245,245,245,.25);
+    border-radius:9999px;
+    background:rgba(20,20,20,.6);
+    color:#f5f5f5;
+    transition:transform .3s cubic-bezier(.19,1,.22,1), background-color .3s ease, border-color .3s ease;
+  }
+  #viewerClose:hover{ transform:scale(1.06); background:rgba(245,245,245,.14); border-color:rgba(245,245,245,.5); }
+  #viewerClose:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  #viewerTitle em{ font-style:italic; }
+  #viewerTitle .pt-title{ font-size:15px; color:rgba(245,245,245,.95); }
+  #viewerTitle .pt-role{ margin-top:.5rem; color:rgba(245,245,245,.74); }
+  #viewerTitle .pt-dir { color:rgba(245,245,245,.74); }
+  #viewerTitle .pt-meta{
+    margin-top:.85rem;
+    font-size:11px; letter-spacing:.16em;
+    color:rgba(245,245,245,.42);
+  }
+  #viewerTitle .pt-meta + .pt-meta{ margin-top:.2rem; }
+  @media (min-width:768px){ #viewerTitle .pt-title{ font-size:17px; } }
+
+  @media (prefers-reduced-motion: reduce){
+    #viewer, #viewerInner{ transition-duration:.01ms; transition-delay:0s; }
+  }
 
   /* reveal on scroll (paired with the observer at the end of the page —
      without it these tiles would stay at opacity 0) */
@@ -115,7 +191,7 @@
 <!-- ============ VIDEO GRID ============ -->
 <section id="work" class="flex-1 px-6 md:px-14 pt-28 md:pt-36 pb-24 md:pb-32">
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-[28px] gap-y-12 lg:gap-y-[52px]">
-    <a href="#" class="reveal block">
+    <button type="button" class="tile-link reveal">
       <div class="flat-tile aspect-video bg-[var(--bg-elevated)]">
         <img src="assets/graphics/ephemeral.jpg"
              alt="Still from ephemeral"
@@ -126,8 +202,15 @@
         <p><em>ephemeral</em> (2026)</p>
         <p>directed by logan cranford</p>
       </div>
-    </a>
-    <a href="#" class="reveal block">
+      <div class="tile-credit" hidden>
+        <p class="pt-title"><em>ephemeral</em> (2026)</p>
+        <p class="pt-role">director of photography</p>
+        <p class="pt-dir">written &amp; directed by logan cranford</p>
+        <p class="pt-meta">shot on sony fx6</p>
+        <p class="pt-meta">not available to the public</p>
+      </div>
+    </button>
+    <button type="button" class="tile-link reveal">
       <div class="flat-tile aspect-video bg-[var(--bg-elevated)]">
         <img src="assets/graphics/ring-A-bell.jpg"
              alt="Still from ring a bell"
@@ -139,8 +222,15 @@
         <p><em>ring a bell</em> (2026)</p>
         <p>directed by emma hagert</p>
       </div>
-    </a>
-    <a href="#" class="reveal block">
+      <div class="tile-credit" hidden>
+        <p class="pt-title"><em>ring a bell</em> (2026)</p>
+        <p class="pt-role">director of photography</p>
+        <p class="pt-dir">written &amp; directed by emma hagert</p>
+        <p class="pt-meta">shot on sony fx6</p>
+        <p class="pt-meta">currently in post-production</p>
+      </div>
+    </button>
+    <button type="button" class="tile-link reveal">
       <div class="flat-tile aspect-video bg-[var(--bg-elevated)]">
         <img src="assets/graphics/all_that_we_see.jpg"
              alt="Still from all that we see"
@@ -152,8 +242,15 @@
         <p><em>all that we see</em> (2026)</p>
         <p>directed by danielle zeldis</p>
       </div>
-    </a>
-    <a href="#" class="reveal block">
+      <div class="tile-credit" hidden>
+        <p class="pt-title"><em>all that we see</em> (2026)</p>
+        <p class="pt-role">director of photography | colorist</p>
+        <p class="pt-dir">written &amp; directed by danielle zeldis</p>
+        <p class="pt-meta">shot on sony a7 IV</p>
+        <p class="pt-meta">not available to the public</p>
+      </div>
+    </button>
+    <button type="button" class="tile-link reveal">
       <div class="flat-tile aspect-video bg-[var(--bg-elevated)]">
         <img src="assets/graphics/nuthing_like_we_can.jpg"
              alt="Still from nothing like the sun"
@@ -165,9 +262,30 @@
         <p><em>nothing like the sun</em> (2024)</p>
         <p>directed by cierra collier</p>
       </div>
-    </a>
+      <div class="tile-credit" hidden>
+        <p class="pt-title"><em>nothing like the sun</em> (2024)</p>
+        <p class="pt-role">director of photography</p>
+        <p class="pt-dir">directed by cierra collier</p>
+        <p class="pt-meta">shot on red epic-m dragon monochrome 6k</p>
+        <p class="pt-meta">screened at museum of moving image</p>
+      </div>
+    </button>
   </div>
 </section>
+
+<!-- ============ STILL VIEWER ============ -->
+<div id="viewer" class="is-closed" role="dialog" aria-modal="true" aria-labelledby="viewerTitle">
+  <button type="button" id="viewerClose" aria-label="Close">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M1 1 19 19M19 1 1 19" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+  </button>
+
+  <div id="viewerInner">
+    <div id="viewerFrame" class="aspect-video w-full bg-black"></div>
+    <div id="viewerTitle" class="mt-5 text-center text-[13px] md:text-[15px] leading-[1.65] text-white/85"></div>
+  </div>
+</div>
 
 <!-- ============ GLOBAL FOOTER ============ -->
 <footer class="px-6 md:px-14 pt-10 pb-10 mt-8 border-t border-white/10">
@@ -189,4 +307,63 @@
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
   }, { threshold: 0.15 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* Clicking a tile enlarges its still with the full credit underneath.
+     These films have no public link, so there is nothing to play — the
+     still is the content. Same open/close contract as the personal page. */
+  (function(){
+    var modal    = document.getElementById('viewer');
+    var frame    = document.getElementById('viewerFrame');
+    var caption  = document.getElementById('viewerTitle');
+    var closeBtn = document.getElementById('viewerClose');
+    var lastFocus = null;
+
+    function open(tile){
+      lastFocus = document.activeElement;
+
+      var src = tile.querySelector('.flat-tile img');
+      var img = document.createElement('img');
+      img.src = src.currentSrc || src.src;
+      img.alt = src.alt || '';
+      frame.replaceChildren(img);
+
+      var credit = tile.querySelector('.tile-credit') || tile.querySelector('.mt-4');
+      caption.innerHTML = credit ? credit.innerHTML : '';
+
+      modal.classList.remove('is-closed');
+      document.body.style.overflow = 'hidden';
+      // the dialog is still visibility:hidden on this tick, and you cannot
+      // focus what is not visible — wait a frame or focus silently fails and
+      // leaves the keyboard behind the backdrop
+      requestAnimationFrame(function(){ closeBtn.focus(); });
+    }
+
+    function close(){
+      modal.classList.add('is-closed');
+      document.body.style.overflow = '';
+      frame.replaceChildren();
+      if (lastFocus) lastFocus.focus();
+    }
+
+    document.querySelectorAll('.tile-link').forEach(function(tile){
+      tile.addEventListener('click', function(e){
+        e.stopPropagation();   // else it carries on to the backdrop underneath
+        open(tile);
+      });
+    });
+
+    closeBtn.addEventListener('click', close);
+
+    // a backdrop dismissal needs press AND release on the backdrop, so a drag
+    // that starts on the still and ends outside it does not close anything
+    var pressedBackdrop = false;
+    modal.addEventListener('mousedown', function(e){ pressedBackdrop = (e.target === modal); });
+    modal.addEventListener('click', function(e){
+      if (e.target === modal && pressedBackdrop) close();
+      pressedBackdrop = false;
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && !modal.classList.contains('is-closed')) close();
+    });
+  })();
 </script>
