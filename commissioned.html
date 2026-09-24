@@ -154,7 +154,8 @@
   #viewer{
     position:fixed; inset:0; z-index:80;
     display:flex; align-items:center; justify-content:center;
-    padding:1.5rem;
+    padding:20px 1.5rem;
+    overflow:auto;                 /* last resort if a credit still will not fit */
     background:rgba(6,6,6,.92);
     backdrop-filter:blur(14px);
     transition:opacity .4s cubic-bezier(.19,1,.22,1), visibility 0s;
@@ -169,7 +170,15 @@
   }
 
   #viewerInner{
-    width:100%; max-width:1100px;
+    width:100%;
+    /* Cap the width by the height actually free, so the 16:9 box and its
+       credit always clear the top and bottom. Without this the box keeps
+       its 1100px and a short window clips the player and the credit off
+       both edges with nothing to scroll to. 210px is the 40px of margin
+       plus a reserve for the tallest credit. */
+    max-width:min(1100px, calc((100vh - 210px) * 16 / 9));
+    max-width:min(1100px, calc((100dvh - 210px) * 16 / 9));
+    margin:auto;
     transform:scale(1);
     transition:transform .45s cubic-bezier(.19,1,.22,1);
   }
