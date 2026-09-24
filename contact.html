@@ -57,23 +57,15 @@
     --accent:#ffffff;
     /* key cursor — horizontal, hotspot on the teeth at the leading edge */
     --cursor-light:url('assets/cursor/cursor-key-light.png') 2 7, auto;
-    --cursor-light-lg:url('assets/cursor/cursor-key-light-lg.png') 3 9, pointer;
   }
 
   /* the key replaces the pointer everywhere, incl. links (UA sets those to
      pointer, so they need naming explicitly rather than inheriting) */
   body,a,button,[role="button"],label,summary,input,textarea,select{
-    cursor:var(--cursor-light);
-  }
-  /* anything actually clickable gets the same key one size up — the swap is
-     instant by nature (CSS cannot tween a cursor image), so the two files are
-     the same silhouette scaled, and it reads as the key stepping forward
-     rather than as a different cursor */
-  a,button,[role="button"],label,summary{
     /* !important because Tailwind's preflight injects button{cursor:pointer}
        after this stylesheet at equal specificity, which otherwise wins and
        drops the key on every button */
-    cursor:var(--cursor-light-lg) !important;
+    cursor:var(--cursor-light) !important;
   }
 
   body{
@@ -93,6 +85,28 @@
   h1,h2,h3,h4,strong,b{ font-weight:200; }
 
   ::selection{ background:var(--accent); color:#0b0a09; }
+
+  /* The montage runs behind the page. 15% of the gate's 20px blur, with a
+     slight overscan so the filter's falloff stays outside the frame, and a
+     scrim over it so the address reads as clearly as it did on flat black. */
+  .page-reel{ position:fixed; inset:0; z-index:0; overflow:hidden; }
+  .page-reel video{
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover;
+    filter:blur(3px);
+    transform:scale(1.03);
+  }
+  /* Flat scrim for the page, plus a bottom-weighted gradient: the footer's
+     small translucent type is the hardest thing to keep legible over a lit
+     frame, and the heading can afford a brighter ground than it can. */
+  .page-reel .scrim{
+    position:absolute; inset:0;
+    background:
+      linear-gradient(to bottom, rgba(8,8,8,0) 35%, rgba(8,8,8,.60) 100%),
+      rgba(8,8,8,.62);
+  }
+  /* everything the reader touches sits above the reel */
+  .page-content{ position:relative; z-index:10; }
 
   /* film grain overlay */
   .grain{
@@ -126,6 +140,13 @@
 
 <div class="grain"></div>
 
+<!-- ============ BACKGROUND REEL ============ -->
+<div class="page-reel" aria-hidden="true">
+  <video data-reel autoplay muted playsinline preload="auto"
+    poster="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'><rect width='1' height='1' fill='%230a0a0a'/></svg>"></video>
+  <div class="scrim"></div>
+</div>
+
 <!-- ============ NAV ============ -->
 <header class="fixed top-0 inset-x-0 z-50 flex justify-center pt-4 px-4">
   <nav class="raw-nav inline-flex items-center gap-4 md:gap-6 px-4 py-1.5 text-[11px] md:text-xs lowercase">
@@ -138,12 +159,12 @@
 </header>
 
 <!-- ============ PAGE HEAD ============ -->
-<section class="px-[30px] pt-36 md:pt-44 pb-14 md:pb-20">
+<section class="page-content px-[30px] pt-36 md:pt-44 pb-14 md:pb-20">
   <h1 class="font-serif font-black lowercase tracked-tight text-[12vw] md:text-[6vw] leading-none">contact</h1>
 </section>
 
 <!-- ============ CONTACT ============ -->
-<footer class="flex-1 relative px-6 md:px-14 pt-24 md:pt-32 pb-10">
+<footer class="page-content flex-1 px-6 md:px-14 pt-24 md:pt-32 pb-10">
   <div class="relative">
     <p class="font-mono text-[11px] tracked text-white/50 mb-6">CONTACT</p>
     <a href="mailto:thailer@thaiarchives.com"
@@ -168,3 +189,5 @@
     </div>
   </div>
 </footer>
+
+<script src="assets/js/reel.js" defer></script>
