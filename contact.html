@@ -16,7 +16,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,400;1,200;1,300&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,400;1,200;1,300&display=swap" rel="stylesheet">
 <title>thaiarchives — Contact</title>
 <meta name="description" content="filmmaker based in new york city. writer, director, cinematographer, and editor.">
 <link rel="canonical" href="https://thaiarchives.com/contact.html">
@@ -116,24 +116,6 @@
   }
 
   .tracked{ letter-spacing:.16em; }
-  /* The page title in a script face, to echo the wordmark. It needs its own
-     rule: the Tailwind config maps every family to Montserrat, and the blanket
-     h1 weight of 200 would starve a face that only ships at 400. Cursive also
-     wants air rather than the tight tracking the sans headings use. */
-  .script-title{
-    font-family:'Pinyon Script', cursive !important;
-    font-weight:400 !important;
-    letter-spacing:.01em;
-    line-height:1.25;
-  }
-
-
-  /* the instagram mark stands in for the word, so it matches the row it
-     sits in: same muted white, same lift on hover, and sized to the
-     text's cap height rather than its line box */
-  .ig-link{ display:inline-flex; align-items:center; opacity:.6; }
-  .ig-link img{ width:15px; height:15px; display:block; }
-  .ig-link:hover, .ig-link:focus-visible{ opacity:1; }
   .tracked-tight{ letter-spacing:-.03em; }
 
   a, button{ transition:color .3s cubic-bezier(.19,1,.22,1), opacity .3s cubic-bezier(.19,1,.22,1); }
@@ -170,25 +152,26 @@
 </header>
 
 <!-- ============ PAGE HEAD ============ -->
-<section class="page-content px-[30px] pt-36 md:pt-44 pb-14 md:pb-20">
-  <h1 class="script-title lowercase text-center text-[18vw] md:text-[9vw]">contact</h1>
+<section class="page-content px-[30px] pt-36 md:pt-44 pb-0 text-center">
+  <h1>
+    <img src="assets/graphics/text-contact.png"
+         alt="contact"
+         width="721" height="221"
+         class="w-[72vw] md:w-[32vw] max-w-[440px] h-auto mx-auto select-none">
+  </h1>
+  <a href="mailto:thailer@thaiarchives.com"
+     class="mt-5 md:mt-7 inline-block font-serif tracked-tight text-[5vw] md:text-[2.5vw] leading-none text-[var(--text)] hover:opacity-55 break-all md:break-normal">
+    thailer@thaiarchives.com
+  </a>
 </section>
 
 <!-- ============ CONTACT ============ -->
-<footer class="page-content flex-1 px-6 md:px-14 pt-24 md:pt-32 pb-10">
+<footer class="page-content flex-1 px-6 md:px-14 pb-10">
   <div class="relative">
-    <a href="mailto:thailer@thaiarchives.com"
-       class="font-serif tracked-tight text-[5vw] md:text-[2.5vw] leading-none block text-center text-[var(--text)] hover:opacity-55 break-all md:break-normal">
-      thailer@thaiarchives.com
-    </a>
-
     <div class="mt-16 md:mt-20 pt-10 border-t border-white/15
                 flex flex-col items-center gap-6 text-center">
       <div class="flex flex-wrap justify-center gap-x-8 gap-y-3 font-mono text-[11px] tracked text-white/60">
-        <a href="https://www.instagram.com/tha1archiv3s/" target="_blank" rel="noopener noreferrer"
-           aria-label="Instagram" class="ig-link">
-          <img src="assets/graphics/instagram.png" alt="Instagram" width="96" height="96">
-        </a>
+        <a href="https://www.instagram.com/tha1archiv3s/" target="_blank" rel="noopener noreferrer" class="hover:text-white">INSTAGRAM</a>
         <a href="https://www.imdb.com/name/nm14852404/" target="_blank" rel="noopener noreferrer" class="hover:text-white">IMDB</a>
         <a href="https://www.linkedin.com/in/thailer-fox-145892276/" target="_blank" rel="noopener noreferrer" class="hover:text-white">LINKEDIN</a>
       </div>
