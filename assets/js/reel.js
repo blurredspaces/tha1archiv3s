@@ -27,21 +27,56 @@
 
   document.querySelectorAll('video[data-reel]').forEach(function (v) {
     var i = Math.floor(Math.random() * 3);
+    var waiting = false;
 
     function play(n) {
       v.src = reels()[n];
-      // Assigning src starts a fresh load, and a play() issued in the same
-      // tick is aborted by it — the promise rejects and the reel sits on its
-      // first frame. Wait until the element can actually play.
-      if (v.readyState >= 3) start();
-      else v.addEventListener('canplay', start, { once: true });
+      // the src assignment has already started a load
+      whenReady();
+    }
+
+    // Assigning src starts a fresh load, and a play() issued in the same tick
+    // is aborted by it — the promise rejects and the reel sits on its first
+    // frame. Wait until the element can actually play.
+    function whenReady() {
+      if (v.readyState >= 3) { start(); return; }
+      if (waiting) return;                 // one pending listener is enough
+      waiting = true;
+      v.addEventListener('canplay', function () {
+        waiting = false;
+        start();
+      }, { once: true });
     }
 
     function start() {
       var p = v.play();
-      // autoplay may still be deferred until the tab is visible — not an error
-      if (p && p.catch) p.catch(function () {});
+      if (p && p.catch) p.catch(function () {
+        /* Refused. Low Power Mode on iOS blocks autoplay outright, muted or
+           not; so does a per-site Auto-Play:Never, a background tab and data
+           saver. The element stays on its poster, which is what the browser
+           draws its own play button over. Nothing to do here — the hooks
+           below try again when the refusal may have lifted. */
+      });
     }
+
+    // A refusal is not permanent. Try again when the tab comes forward, and
+    // on the first real gesture: browsers allow playback from inside a user
+    // gesture even while autoplay is blocked. On the home page that covers
+    // the padlock click, which every visitor makes before seeing the reel.
+    function retry() {
+      if (!v.paused) return;
+      // NETWORK_LOADING is 2; if nothing is buffered and nothing is in
+      // flight, the browser never started fetching — nudge it
+      if (v.readyState < 3 && v.networkState !== 2) v.load();
+      whenReady();
+    }
+
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden) retry();
+    });
+    ['pointerdown', 'touchstart', 'keydown'].forEach(function (evt) {
+      document.addEventListener(evt, retry, { passive: true });
+    });
 
     // no `loop` attribute: advance to the next cut instead of repeating. The
     // list is re-read here, so a rotated phone or a resized window picks up
