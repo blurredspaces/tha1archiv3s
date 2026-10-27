@@ -1,0 +1,228 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans:  ['Montserrat', 'sans-serif'],
+          serif: ['Montserrat', 'sans-serif'],
+          mono:  ['Montserrat', 'sans-serif'],
+        },
+      },
+    },
+  };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,400;1,200;1,300&display=swap" rel="stylesheet">
+<title>thaiarchives — Phosphene</title>
+<meta name="description" content="Phosphene, a senior thesis short film by Thailer Fox, about the search for creative identity. support the campaign.">
+<link rel="canonical" href="https://thaiarchives.com/gofundme.html">
+
+<!-- link previews: both .html and the extensionless form resolve, so the
+     canonical above names which one counts -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="thaiarchives">
+<meta property="og:title" content="thaiarchives — Phosphene">
+<meta property="og:description" content="Phosphene, a senior thesis short film by Thailer Fox, about the search for creative identity. support the campaign.">
+<meta property="og:url" content="https://thaiarchives.com/gofundme.html">
+<meta property="og:image" content="https://thaiarchives.com/assets/graphics/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="thaiarchives">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="thaiarchives — Phosphene">
+<meta name="twitter:description" content="Phosphene, a senior thesis short film by Thailer Fox, about the search for creative identity. support the campaign.">
+<meta name="twitter:image" content="https://thaiarchives.com/assets/graphics/og-image.png">
+<meta name="twitter:image:alt" content="thaiarchives">
+
+<meta name="theme-color" content="#0a0a0a">
+
+<!-- the key, white on the site black: a transparent mark would vanish
+     against a light tab bar -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16.png">
+<link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
+<meta name="author" content="Thailer Fox">
+
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --bg-elevated:#141414;
+    --text:#f5f5f5;
+    --text-dim:#a3a3a3;
+    --text-faint:#6b6b6b;
+    --accent:#ffffff;
+    --accent-soft:#d4d4d4;
+    --line:rgba(245,245,245,.12);
+    --line-strong:rgba(245,245,245,.22);
+    /* key cursor — horizontal, hotspot on the teeth at the leading edge */
+    --cursor-light:url('assets/cursor/cursor-key-light.png') 2 7, auto;
+  }
+
+  /* the key replaces the pointer everywhere, incl. links (UA sets those to
+     pointer, so they need naming explicitly rather than inheriting) */
+  body,a,button,[role="button"],label,summary,input,textarea,select{
+    /* !important because Tailwind's preflight injects button{cursor:pointer}
+       after this stylesheet at equal specificity, which otherwise wins and
+       drops the key on every button */
+    cursor:var(--cursor-light) !important;
+  }
+
+  *{ scroll-behavior:smooth; }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Montserrat',sans-serif;
+    font-weight:200;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  .font-serif{ font-family:'Montserrat',sans-serif; }
+  .font-mono{ font-family:'Montserrat',sans-serif; }
+  .font-black,.font-bold,.font-extrabold,.font-semibold,.font-medium{ font-weight:200 !important; }
+  h1,h2,h3,h4,strong,b{ font-weight:200; }
+
+  ::selection{ background:var(--accent); color:#0b0a09; }
+
+  /* film grain overlay */
+  .grain{
+    position:fixed; inset:0; z-index:60; pointer-events:none;
+    opacity:.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  .tracked{ letter-spacing:.16em; }
+
+  /* the campaign line under the nav: a step quieter than the menu above it,
+     and it borrows the nav's hover blur so the header behaves as one thing */
+  .nav-sub{
+    margin-top:.3rem;
+    font-size:10px;
+    letter-spacing:.16em;
+    text-transform:lowercase;
+    color:rgba(245,245,245,.55);
+    text-shadow:0 1px 12px rgba(0,0,0,.75);
+    filter:blur(0);
+    transition:filter .35s cubic-bezier(.19,1,.22,1), color .35s cubic-bezier(.19,1,.22,1);
+  }
+  .nav-sub:hover, .nav-sub:focus-visible{ color:#f5f5f5; filter:blur(1.6px); }
+  .nav-sub .film{ font-weight:400; }
+
+  .tracked-tight{ letter-spacing:-.03em; }
+
+  a, button{ transition:color .3s cubic-bezier(.19,1,.22,1), opacity .3s cubic-bezier(.19,1,.22,1), transform .3s cubic-bezier(.19,1,.22,1), background-color .3s cubic-bezier(.19,1,.22,1); }
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  /* raw nav bar */
+  .raw-nav a{
+    color:#f5f5f5; font-weight:200;
+    text-shadow:0 1px 12px rgba(0,0,0,.75);
+    filter:blur(0);
+    transition:filter .35s cubic-bezier(.19,1,.22,1);
+  }
+  .raw-nav a:hover, .raw-nav a:focus-visible{ filter:blur(2.2px); }
+
+  /* Emphasis without weight: the stylesheet pins strong and b to 200 to keep
+     the page light, so a real bold would be overridden anyway. 400 against a
+     200 body reads as emphasis in a face this thin. */
+  .film{ font-weight:400; color:var(--text); }
+
+  /* a fifth smaller than the film's name, so the two lines read as title
+     and subtitle rather than one long heading */
+  .subtitle{ font-size:.8em; }
+
+  .prose p + p{ margin-top:1.4rem; }
+
+  /* the embed arrives in an iframe GoFundMe sizes itself */
+  .gfm-embed{ display:flex; justify-content:center; }
+  .gfm-embed iframe{ max-width:100%; }
+
+  /* reveal on scroll */
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .9s cubic-bezier(.19,1,.22,1), transform .9s cubic-bezier(.19,1,.22,1); }
+  .reveal.is-visible{ opacity:1; transform:translateY(0); }
+</style>
+
+<div class="grain"></div>
+
+<!-- ============ NAV ============ -->
+<header class="fixed top-0 inset-x-0 z-50 flex flex-col items-center pt-4 px-4">
+  <nav class="raw-nav inline-flex items-center gap-4 md:gap-6 px-4 py-1.5 text-[11px] md:text-xs lowercase">
+    <a href="index.html">home</a>
+    <a href="personal.html">personal</a>
+    <a href="commissioned.html">commissioned</a>
+    <a href="info.html">info</a>
+    <a href="contact.html">contact</a>
+  </nav>
+  <a href="gofundme.html" class="nav-sub"><span class="film">Phosphene</span> - A Senior Film Thesis</a>
+</header>
+
+<!-- ============ PHOSPHENE ============ -->
+<section class="px-6 md:px-14 pt-32 md:pt-40 pb-20 md:pb-28">
+  <div class="max-w-[900px] mx-auto">
+
+    <h1 class="reveal text-center tracked-tight leading-[1.15] text-[7vw] md:text-[2.9vw]">
+      <span class="film">Phosphene</span><br>
+      <span class="subtitle">A Senior Film Thesis</span>
+    </h1>
+    <p class="reveal mt-2 text-center font-mono text-[20px] tracked text-[var(--accent-soft)]">Fund Raise</p>
+
+    <figure class="reveal mt-10 md:mt-14">
+      <img src="assets/graphics/phosphene-reference.jpg"
+           alt="Two figures on a rooftop at dusk, the city lit behind them — reference frame for Phosphene"
+           width="967" height="466"
+           class="w-full h-auto">
+    </figure>
+
+    <div class="reveal prose mt-12 md:mt-16 text-[14px] md:text-[15px] leading-[1.8] text-[var(--text-dim)]">
+      <p><span class="film">Phosphene</span> is a short film about the search for creative identity, the craving for validation, and the struggle to create something truly authentic. Following Venus, a young aspiring photographer drawn to a world where desire, drugs, and creativity become intertwined, the film explores the beauty and uncertainty of finding one's place as an artist.</p>
+      <p>As a filmmaker and aspiring cinematographer, this project is deeply personal to me and an opportunity to bring a story close to my heart to life. Your contribution will help make <span class="film">Phosphene</span> possible, supporting the resources needed to bring this film from page to the screen. Every donation, no matter the amount, brings us one step closer to sharing this story with an audience and creating a film that I hope will inspire empathy and remind others that they are not alone in their creative struggles.</p>
+    </div>
+
+    <p class="reveal mt-10 text-[15px] md:text-[17px] italic leading-[1.7] text-[var(--text)]">
+      Thailer Fox - Thank you for your support.
+    </p>
+
+    <div class="reveal mt-14 md:mt-16">
+      <div class="gfm-embed" data-url="https://www.gofundme.com/f/thailer-fox-senior-thesis-fim/widget/medium?attribution_id=sl%3Aa789e0bb-01b9-4712-a5c6-590b03347e70"></div>
+      <!-- A direct way in, always. The widget is an iframe on gofundme.com and
+           their frame-ancestors policy does not list this domain; it is only
+           report-only today, so it renders, but a plain link means the page
+           still works if that is ever enforced, or if the script is blocked. -->
+      <p class="mt-6 text-center font-mono text-[11px] tracked text-white/45">
+        <a href="https://www.gofundme.com/f/thailer-fox-senior-thesis-fim"
+           target="_blank" rel="noopener noreferrer" class="hover:text-white">OPEN THE CAMPAIGN ON GOFUNDME</a>
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<script defer src="https://www.gofundme.com/static/js/embed.js"></script>
+
+<!-- ============ GLOBAL FOOTER ============ -->
+<footer class="px-6 md:px-14 pt-10 pb-10 mt-8 border-t border-white/10">
+  <div class="flex flex-col items-center gap-6 text-center">
+    <div class="flex flex-wrap justify-center gap-x-8 gap-y-3 font-mono text-[11px] tracked text-white/60">
+      <a href="https://www.instagram.com/tha1archiv3s/" target="_blank" rel="noopener noreferrer" class="hover:text-white">INSTAGRAM</a>
+      <a href="https://www.imdb.com/name/nm14852404/" target="_blank" rel="noopener noreferrer" class="hover:text-white">IMDB</a>
+      <a href="https://www.linkedin.com/in/thailer-fox-145892276/" target="_blank" rel="noopener noreferrer" class="hover:text-white">LINKEDIN</a>
+    </div>
+    <div class="flex flex-col md:flex-row md:items-center justify-center gap-2 md:gap-8 font-mono text-[11px] tracked text-white/40">
+      <p>© 2026 thaiarchives — all rights reserved</p>
+      <p>site by <a href="https://blurredspaces.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white">BLURRED SPACES</a></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>

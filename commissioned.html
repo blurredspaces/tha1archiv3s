@@ -105,6 +105,22 @@
   }
 
   .tracked{ letter-spacing:.16em; }
+
+  /* the campaign line under the nav: a step quieter than the menu above it,
+     and it borrows the nav's hover blur so the header behaves as one thing */
+  .nav-sub{
+    margin-top:.3rem;
+    font-size:10px;
+    letter-spacing:.16em;
+    text-transform:lowercase;
+    color:rgba(245,245,245,.55);
+    text-shadow:0 1px 12px rgba(0,0,0,.75);
+    filter:blur(0);
+    transition:filter .35s cubic-bezier(.19,1,.22,1), color .35s cubic-bezier(.19,1,.22,1);
+  }
+  .nav-sub:hover, .nav-sub:focus-visible{ color:#f5f5f5; filter:blur(1.6px); }
+  .nav-sub .film{ font-weight:400; }
+
   .tracked-tight{ letter-spacing:-.03em; }
 
   a, button{ transition:color .3s cubic-bezier(.19,1,.22,1), opacity .3s cubic-bezier(.19,1,.22,1); }
@@ -250,7 +266,7 @@
 <div class="grain"></div>
 
 <!-- ============ NAV ============ -->
-<header class="fixed top-0 inset-x-0 z-50 flex justify-center pt-4 px-4">
+<header class="fixed top-0 inset-x-0 z-50 flex flex-col items-center pt-4 px-4">
   <nav class="raw-nav inline-flex items-center gap-4 md:gap-6 px-4 py-1.5 text-[11px] md:text-xs lowercase">
     <a href="index.html">home</a>
     <a href="personal.html">personal</a>
@@ -258,6 +274,7 @@
     <a href="info.html">info</a>
     <a href="contact.html">contact</a>
   </nav>
+  <a href="gofundme.html" class="nav-sub"><span class="film">Phosphene</span> - A Senior Film Thesis</a>
 </header>
 
 <h1 class="sr-only">commissioned</h1>
@@ -375,6 +392,32 @@
         <p class="pt-meta">not available to the public</p>
       </div>
     </button>
+    <button type="button" class="tile-link reveal" data-yt="aj_7ZydBgr4">
+      <div class="flat-tile aspect-video bg-[var(--bg-elevated)]">
+        <img src="https://img.youtube.com/vi/aj_7ZydBgr4/maxresdefault.jpg"
+             onerror="this.onerror=null;this.src='https://img.youtube.com/vi/aj_7ZydBgr4/hqdefault.jpg';"
+             alt="Still from ode to"
+             loading="lazy" decoding="async"
+             class="absolute inset-0 w-full h-full object-cover">
+        <span class="play-mark" aria-hidden="true">
+          <span>
+            <svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true">
+              <path d="M15 9 0.5 17.66 0.5 0.34 15 9Z" fill="currentColor"/>
+            </svg>
+          </span>
+        </span>
+      </div>
+      <div class="mt-4 text-center text-[13px] md:text-[14px] leading-[1.65] text-white/85">
+        <p><em>ode to</em> (2025)</p>
+        <p>director of photography | editor</p>
+      </div>
+      <div class="tile-credit" hidden>
+        <p class="pt-title"><em>ode to</em> (2025)</p>
+        <p class="pt-role">director of photography | editor</p>
+        <p class="pt-dir">written &amp; directed by lulu dakinah</p>
+        <p class="pt-meta">shot on blackmagic cinema camera 6k</p>
+      </div>
+    </button>
     <button type="button" class="tile-link reveal">
       <div class="flat-tile aspect-video bg-[var(--bg-elevated)]">
         <img src="assets/graphics/nuthing_like_we_can.jpg"
@@ -404,32 +447,6 @@
         <p class="pt-dir">directed by cierra collier</p>
         <p class="pt-meta">shot on red epic-m dragon monochrome 6k</p>
         <p class="pt-meta">screened at museum of moving image</p>
-      </div>
-    </button>
-    <button type="button" class="tile-link reveal" data-yt="aj_7ZydBgr4">
-      <div class="flat-tile aspect-video bg-[var(--bg-elevated)]">
-        <img src="https://img.youtube.com/vi/aj_7ZydBgr4/maxresdefault.jpg"
-             onerror="this.onerror=null;this.src='https://img.youtube.com/vi/aj_7ZydBgr4/hqdefault.jpg';"
-             alt="Still from ode to"
-             loading="lazy" decoding="async"
-             class="absolute inset-0 w-full h-full object-cover">
-        <span class="play-mark" aria-hidden="true">
-          <span>
-            <svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true">
-              <path d="M15 9 0.5 17.66 0.5 0.34 15 9Z" fill="currentColor"/>
-            </svg>
-          </span>
-        </span>
-      </div>
-      <div class="mt-4 text-center text-[13px] md:text-[14px] leading-[1.65] text-white/85">
-        <p><em>ode to</em> (2025)</p>
-        <p>director of photography | editor</p>
-      </div>
-      <div class="tile-credit" hidden>
-        <p class="pt-title"><em>ode to</em> (2025)</p>
-        <p class="pt-role">director of photography | editor</p>
-        <p class="pt-dir">written &amp; directed by lulu dakinah</p>
-        <p class="pt-meta">shot on blackmagic cinema camera 6k</p>
       </div>
     </button>
   </div>

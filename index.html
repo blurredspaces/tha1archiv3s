@@ -99,6 +99,22 @@
 
   .tracked{ letter-spacing:.16em; }
 
+  /* the campaign line under the nav: a step quieter than the menu above it,
+     and it borrows the nav's hover blur so the header behaves as one thing */
+  .nav-sub{
+    margin-top:.3rem;
+    font-size:10px;
+    letter-spacing:.16em;
+    text-transform:lowercase;
+    color:rgba(245,245,245,.55);
+    text-shadow:0 1px 12px rgba(0,0,0,.75);
+    filter:blur(0);
+    transition:filter .35s cubic-bezier(.19,1,.22,1), color .35s cubic-bezier(.19,1,.22,1);
+  }
+  .nav-sub:hover, .nav-sub:focus-visible{ color:#f5f5f5; filter:blur(1.6px); }
+  .nav-sub .film{ font-weight:400; }
+
+
   .sprocket-col{
     background-image: radial-gradient(circle, rgba(243,237,225,.14) 1.5px, transparent 1.6px);
     background-size: 100% 34px;
@@ -224,13 +240,14 @@
 <div class="grain"></div>
 
 <!-- ============ NAV ============ -->
-<header class="site-nav fixed top-0 inset-x-0 z-50 flex justify-center pt-4 px-4">
+<header class="site-nav fixed top-0 inset-x-0 z-50 flex flex-col items-center pt-4 px-4">
   <nav class="raw-nav inline-flex items-center gap-4 md:gap-6 px-4 py-1.5 text-[11px] md:text-xs lowercase">
     <a href="personal.html">personal</a>
     <a href="commissioned.html">commissioned</a>
     <a href="info.html">info</a>
     <a href="contact.html">contact</a>
   </nav>
+  <a href="gofundme.html" class="nav-sub"><span class="film">Phosphene</span> - A Senior Film Thesis</a>
 </header>
 
 <!-- ============ HERO (the whole home page) ============ -->
